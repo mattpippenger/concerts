@@ -344,6 +344,14 @@ html, body {
   margin-top: 3px;
 }
 .ticket .support .w { color: var(--gold); font-weight: 700; }
+.ticket .tour-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--teal);
+  margin-top: 5px;
+}
 .ticket .venue {
   font-family: var(--font-mono);
   font-size: 13px;
@@ -460,6 +468,14 @@ html, body {
   transition: transform .08s, box-shadow .08s, border-color .08s;
 }
 .rowitem:hover { transform: translateX(3px); box-shadow: 3px 3px 0 var(--shadow); border-left-color: var(--red); }
+.rowitem .artist-thumb {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border-radius: 4px;
+  flex: 0 0 38px;
+  border: 1px solid var(--line);
+}
 .rowitem .rank {
   font-family: var(--font-mono);
   font-size: 12px;
@@ -574,6 +590,44 @@ html, body {
   gap: 6px 18px;
 }
 .detail-head .stat-line b { color: var(--on-stub); }
+.detail-head-banner {
+  position: relative;
+  overflow: hidden;
+}
+.detail-head-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.15) 60%, rgba(0,0,0,0) 100%);
+  z-index: 0;
+}
+.detail-head-banner > *,
+.detail-head-banner .detail-head-inner {
+  position: relative;
+  z-index: 1;
+}
+.detail-head-banner h2,
+.detail-head-banner .stat-line,
+.detail-head-banner .aka {
+  text-shadow: 0 1px 4px rgba(0,0,0,0.8);
+}
+.detail-head-banner .back { text-shadow: 0 1px 3px rgba(0,0,0,0.8); }
+
+.detail-head-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.detail-head-text { flex: 1 1 auto; min-width: 0; }
+.detail-head .artist-photo {
+  width: 110px;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex: 0 0 110px;
+  border: 2px solid var(--gold);
+  box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+}
 
 /* ------------------------------------------------------------------ charts */
 .chart-card {
@@ -631,6 +685,8 @@ html, body {
   line-height: 1.1;
 }
 .fact .sub { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+button.fact-link { font: inherit; color: inherit; text-align: left; cursor: pointer; width: 100%; }
+button.fact-link:hover { border-top-color: var(--red); transform: translateY(-2px); box-shadow: 3px 5px 0 var(--shadow); transition: transform .08s, box-shadow .08s, border-color .08s; }
 
 /* milestone callouts (On This Day) */
 .milestone {

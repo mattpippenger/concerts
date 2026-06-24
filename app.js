@@ -86,6 +86,25 @@
   })();
   function groupOf(name) { return GROUPS[String(name || "").toLowerCase()] || name; }
 
+  var ARTIST_BANNERS = {};
+  (function () {
+    var src = (window.CONCERT_CONFIG && window.CONCERT_CONFIG.artistBanners) || {};
+    for (var k in src) { if (src.hasOwnProperty(k)) ARTIST_BANNERS[k.toLowerCase()] = src[k]; }
+  })();
+  function bannerOf(name) { return ARTIST_BANNERS[String(name || '').toLowerCase()] || null; }
+
+  var TOURS = window.TOUR_DATA || {};
+  function tourOf(s) {
+    return TOURS[s.headliner + '|' + (s.date || '') + '|' + s.venueRaw] || null;
+  }
+
+  var ARTIST_PHOTOS = {};
+  (function () {
+    var src = (window.CONCERT_CONFIG && window.CONCERT_CONFIG.artistPhotos) || {};
+    for (var k in src) { if (src.hasOwnProperty(k)) ARTIST_PHOTOS[k.toLowerCase()] = src[k]; }
+  })();
+  function photoOf(name) { return ARTIST_PHOTOS[String(name || "").toLowerCase()] || null; }
+
   // group (artist) -> shows (any slot), sorted chronologically
   var bandIndex = {};   // group name -> [shows]
   SHOWS.forEach(function (s) {
@@ -170,6 +189,10 @@
     }
     return esc(name);
   }
+  function tourLine(s) {
+    var t = tourOf(s);
+    return t ? '<div class="tour-name">' + esc(t) + '</div>' : '';
+  }
   function supportLine(s, highlight) {
     var support = s.bands.slice(1);
     if (!support.length) return "";
@@ -224,6 +247,7 @@
              '<div class="body">' + badge +
                '<div class="headliner">' + head + '</div>' +
                supportLine(s, hl) +
+               tourLine(s) +
                venueLine(s, opts.venueHighlight) +
                '<div class="ticket-foot"><div class="barcode"></div>' + setlistLink(s) + '</div>' +
              '</div>' +
@@ -311,8 +335,12 @@
   var app = el("app");
 
   function rowItem(rank, name, count, maxCount, kind) {
+    var thumb = (kind === "artist" && photoOf(name))
+      ? '<img class="artist-thumb" src="' + esc(photoOf(name)) + '" alt="" aria-hidden="true">'
+      : '';
     return '<button class="rowitem" data-kind="' + kind + '" data-name="' + esc(name) + '">' +
              '<span class="rank">' + rank + '</span>' +
+             thumb +
              '<span class="name" title="' + esc(name) + '">' + esc(name) + '</span>' +
              '<span class="cnt">' + count + '<span class="x">&times;</span></span>' +
            '</button>';
@@ -479,12 +507,24 @@
       var ad = a.date || "0000", bd = b.date || "0000";
       return ad > bd ? -1 : ad < bd ? 1 : b.id - a.id;   // newest first
     });
+    var detailPhoto = (kind === "artist" && photoOf(name))
+      ? '<img class="artist-photo" src="' + esc(photoOf(name)) + '" alt="' + esc(name) + '">'
+      : '';
+    var banner = (kind === "artist") ? bannerOf(name) : null;
+    var bannerStyle = banner
+      ? ' style="background-image:url(\'' + esc(banner) + '\');background-size:cover;background-position:right center;"'
+      : '';
     app.innerHTML =
-      '<div class="detail-head">' +
-        '<button class="back" id="detail-back">&larr; back</button>' +
-        '<h2>' + esc(name) + '</h2>' +
-        akaHtml +
-        '<div class="stat-line">' + stat.map(function (x) { return "<span>" + x + "</span>"; }).join("") + '</div>' +
+      '<div class="detail-head' + (banner ? ' detail-head-banner' : '') + '"' + bannerStyle + '>' +
+        (detailPhoto ? '<div class="detail-head-inner">' : '') +
+        '<div class="detail-head-text">' +
+          '<button class="back" id="detail-back">&larr; back</button>' +
+          '<h2>' + esc(name) + '</h2>' +
+          akaHtml +
+          '<div class="stat-line">' + stat.map(function (x) { return "<span>" + x + "</span>"; }).join("") + '</div>' +
+        '</div>' +
+        detailPhoto +
+        (detailPhoto ? '</div>' : '') +
       '</div>' +
       ticketsHtml(ordered, {
         highlight: kind === "artist" ? name : null,
@@ -519,6 +559,7 @@
         '<div class="chart-card"><h3>Top venues</h3>' + barChartHorizontal(topV, { alt: true }) + '</div>' +
       '</div>' +
       funStats();
+    wireFacts();
   }
 
   // ---- Fun stats ---------------------------------------------------------
@@ -526,7 +567,7 @@
     var facts = [];
     // busiest year
     var busiest = YEARS.slice().sort(function (a, b) { return yearCounts[b] - yearCounts[a]; })[0];
-    facts.push(fact("Busiest year", busiest, yearCounts[busiest] + " shows"));
+    facts.push(fact("Busiest year", busiest, yearCounts[busiest] + " shows", {nav: 'year', year: busiest}));
     // average per active year
     var avg = (SHOWS.length / YEARS.length).toFixed(1);
     facts.push(fact("Avg / active year", avg, "shows per year"));
@@ -536,10 +577,14 @@
     var topDec = Object.keys(dec).sort(function (a, b) { return dec[b] - dec[a]; })[0];
     facts.push(fact("Top decade", topDec + "s", dec[topDec] + " shows"));
     // first show
-    if (DATED[0]) facts.push(fact("First show ever", DATED[0].headliner, prettyDate(DATED[0].date)));
+    if (DATED[0]) facts.push(fact("First show ever", DATED[0].headliner, prettyDate(DATED[0].date), {nav: 'artist', name: groupOf(DATED[0].headliner)}));
     // longest gap between shows
     var gap = longestGap();
-    if (gap) facts.push(fact("Longest dry spell", gap.days + " days", prettyDate(gap.from) + " → " + prettyDate(gap.to)));
+    if (gap) {
+      var gapTo = gap.to.split('-');
+      facts.push(fact("Longest dry spell", gap.days + " days", prettyDate(gap.from) + " → " + prettyDate(gap.to),
+        {nav: 'otd', month: +gapTo[1], day: +gapTo[2]}));
+    }
     // bands seen once
     var once = ARTISTS.filter(function (a) { return a.count === 1; }).length;
     facts.push(fact("One-and-done bands", once, "seen exactly once"));
@@ -547,18 +592,43 @@
     var stateCount = {};
     SHOWS.forEach(function (s) { if (s.state) stateCount[s.state] = (stateCount[s.state] || 0) + 1; });
     var topState = Object.keys(stateCount).sort(function (a, b) { return stateCount[b] - stateCount[a]; })[0];
-    if (topState) facts.push(fact("Home turf", topState, stateCount[topState] + " shows"));
+    if (topState) facts.push(fact("Home turf", topState, stateCount[topState] + " shows", {nav: 'search', q: topState}));
     // milestone shows
     [50, 100, 150, 200, 250, 300].forEach(function (m) {
       var s = DATED[m - 1];
-      if (s) facts.push(fact(ordinal(m) + " show", s.headliner, prettyDate(s.date)));
+      if (s) facts.push(fact(ordinal(m) + " show", s.headliner, prettyDate(s.date), {nav: 'artist', name: groupOf(s.headliner)}));
     });
 
     return '<div class="view-head">Fun Facts</div><div class="factgrid">' + facts.join("") + '</div>';
   }
-  function fact(k, v, sub) {
-    return '<div class="fact"><div class="k">' + esc(k) + '</div><div class="v">' + esc(v) + '</div>' +
-           (sub ? '<div class="sub">' + esc(sub) + '</div>' : '') + '</div>';
+  function fact(k, v, sub, nav) {
+    var inner = '<div class="k">' + esc(k) + '</div><div class="v">' + esc(v) + '</div>' +
+                (sub ? '<div class="sub">' + esc(sub) + '</div>' : '');
+    if (!nav) return '<div class="fact">' + inner + '</div>';
+    var attrs = 'type="button" class="fact fact-link"';
+    for (var key in nav) { if (nav.hasOwnProperty(key)) attrs += ' data-' + key + '="' + esc(String(nav[key])) + '"'; }
+    return '<button ' + attrs + '>' + inner + '</button>';
+  }
+  function wireFacts() {
+    Array.prototype.forEach.call(document.querySelectorAll('.fact-link'), function (b) {
+      b.addEventListener('click', function () {
+        var nav = b.getAttribute('data-nav');
+        if (nav === 'artist') {
+          showDetail('artist', b.getAttribute('data-name'));
+        } else if (nav === 'year') {
+          searchState.year = +b.getAttribute('data-year');
+          searchState.q = '';
+          setView('search');
+        } else if (nav === 'otd') {
+          otdDate = { m: +b.getAttribute('data-month'), d: +b.getAttribute('data-day') };
+          setView('onthisday');
+        } else if (nav === 'search') {
+          searchState.q = b.getAttribute('data-q');
+          searchState.year = null;
+          setView('search');
+        }
+      });
+    });
   }
   function longestGap() {
     var best = null;

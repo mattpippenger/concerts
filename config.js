@@ -20,7 +20,9 @@ window.CONCERT_CONFIG = {
     'Sammy Hagar & The Wabos': 'Sammy Hagar',
     'Sammy Hagar and the Wabos': 'Sammy Hagar',
     'Sammy Hagar & The Circle': 'Sammy Hagar',
-    'Sammy Hagar and the Circle': 'Sammy Hagar'
+    'Sammy Hagar and the Circle': 'Sammy Hagar',
+
+    'Jimmy Buffett': 'Jimmy Buffett & The Coral Reefer Band'
   },
 
   // venueNames: clean display names for venues whose spreadsheet text carries extra
@@ -34,6 +36,32 @@ window.CONCERT_CONFIG = {
   // old name into `aka`, then reload index.html. No rebuild, no spreadsheet edits.
   // Two raw entries that share the same `name` are treated as ONE venue (e.g. the
   // Old National Centre rooms below). Venues not listed here display as-is.
+  // artistBanners: map artist group name -> relative path to a banner background image.
+  // Used as the background of that artist's detail page header. Text is automatically
+  // given a dark overlay + white shadow to stay readable. No entry = default solid bg.
+  artistBanners: {
+    'Van Halen': 'images/artists/van-halen-banner.jpg'   // guitar right, black left — text sits naturally
+  },
+
+  // artistPhotos: map artist group name -> relative path to a photo file.
+  // Drop images into an "images/artists/" folder next to index.html, then add
+  // entries here. Only the detail page and list row for that artist are affected.
+  // Key matching is case-insensitive. No entry = no photo shown (no placeholder).
+  // Example:
+  //   'Pearl Jam': 'images/artists/pearl-jam.jpg',
+  artistPhotos: {
+    'Big Head Todd & The Monsters': 'images/artists/big-head-todd.jpg',
+    'Dave Matthews Band':           'images/artists/dave-matthews-band.jpg',
+    'Counting Crows':               'images/artists/counting-crows.jpg',
+    'Jimmy Buffett & The Coral Reefer Band': 'images/artists/jimmy-buffett.jpg',
+    'Better Than Ezra':             'images/artists/better-than-ezra.jpg',
+    'Poison':                       'images/artists/poison.jpg',
+    'Pete Yorn':                    'images/artists/pete-yorn.jpg',
+    'The BoDeans':                  'images/artists/bodeans.jpg',
+    'Def Leppard':                  'images/artists/def-leppard.jpg',
+    'Sammy Hagar':                  'images/artists/sammy-hagar.jpg',
+  },
+
   venueNames: {
     'Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)': {
       name: 'Ruoff Home Mortgage Music Center',
@@ -48,8 +76,8 @@ window.CONCERT_CONFIG = {
       aka: ['The Murat']
     },
     'Old National Centre (The Murat Egyptian Room)': {
-      name: 'Old National Centre',
-      aka: ['The Murat Egyptian Room']
+      name: 'Egyptian Room',
+      aka: ['The Murat Egyptian Room', 'Old National Centre Egyptian Room']
     },
     'Deluxe @ The Old National Centre (The Murat)': {
       name: 'Old National Centre',
