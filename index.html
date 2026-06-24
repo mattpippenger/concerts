@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Concert Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- top stub -->
+  <header class="masthead">
+    <div class="masthead-left">
+      <div class="admit-one">ADMIT ONE</div>
+      <h1 class="title">CONCERT&nbsp;TRACKER</h1>
+      <div class="subtitle">Matt's lifetime of live music &mdash; one stub at a time</div>
+    </div>
+    <div class="masthead-right">
+      <div class="serial" id="masthead-serial">No.&nbsp;000000</div>
+      <div class="meta-line" id="masthead-meta">loading&hellip;</div>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab is-active" data-view="overview">Overview</button>
+    <button class="tab" data-view="onthisday">On This Day</button>
+    <button class="tab" data-view="artists">Artists</button>
+    <button class="tab" data-view="venues">Venues</button>
+    <button class="tab" data-view="timeline">Timeline</button>
+    <button class="tab" data-view="search">Search</button>
+  </nav>
+
+  <main id="app">
+    <!-- views are rendered here by app.js -->
+    <div class="loading" id="loading">Tearing the stub&hellip;</div>
+  </main>
+
+  <footer class="footer">
+    <div class="theme-picker" id="theme-picker"><span class="tp-label">Theme</span></div>
+    <span class="footer-hint"><span id="footer-meta"></span> &middot; Double-click <code>Refresh &amp; Open.bat</code> to refresh from your spreadsheet.</span>
+  </footer>
+
+  <!-- data + config load before the app logic -->
+  <script src="config.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

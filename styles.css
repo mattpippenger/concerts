@@ -1,0 +1,706 @@
+/* ===========================================================================
+   Concert Tracker -- retro concert-ticket theme
+   Warm kraft paper, deep red + navy ink, monospace serials, perforated stubs.
+   No web fonts (fully offline): condensed system sans + Courier.
+   =========================================================================== */
+
+:root {
+  --paper:      #f3e7cc;   /* kraft / cream background          */
+  --paper-2:    #efe0bf;   /* slightly darker panel             */
+  --card:       #fbf4e3;   /* ticket stock                      */
+  --ink:        #20283f;   /* deep navy ink                     */
+  --ink-soft:   #4a5169;
+  --red:        #b32f2a;   /* stamp red                         */
+  --red-deep:   #8c211d;
+  --gold:       #c98a23;   /* mustard accent                    */
+  --teal:       #2c6e6a;
+  --line:       #cbb187;   /* hairline / perforation            */
+  --shadow:     rgba(40, 28, 10, 0.22);
+
+  --font-display: "Arial Narrow", "Oswald", "Helvetica Neue", Arial, sans-serif;
+  --font-mono:    "Courier New", ui-monospace, monospace;
+  --font-body:    "Helvetica Neue", Arial, system-ui, sans-serif;
+
+  --stub-bg:    #20283f;   /* dark accent: ticket stub & detail head */
+  --on-stub:    #fbf4e3;   /* text on --stub-bg                     */
+  --on-red:     #fbe6c8;   /* text on the --red masthead            */
+}
+
+/* ===========================================================================
+   THEME VARIANTS  (switchable live via the picker; saved to localStorage)
+   Each overrides the palette + font pairing. Mono (Courier) stays for serials.
+   =========================================================================== */
+
+/* B -- Sunset Festival: warm peach, magenta-red, deep grape, tangerine */
+html[data-theme="sunset"] {
+  --paper: #fbe7d2; --paper-2: #f7d9bd; --card: #fff3e4;
+  --ink: #3a1d46; --ink-soft: #6e4566;
+  --red: #d63b6b; --red-deep: #a82753;
+  --gold: #e08a1e; --teal: #c8527a;
+  --line: #e6b78f; --shadow: rgba(120, 40, 60, 0.20);
+  --stub-bg: #3a1d46; --on-stub: #fff3e4; --on-red: #fff3e4;
+  --font-display: "Franklin Gothic Medium", "Arial Narrow", Impact, sans-serif;
+  --font-body: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
+}
+
+/* C -- Vintage Vinyl: aged paper, forest green, mustard, warm brown (serif) */
+html[data-theme="vinyl"] {
+  --paper: #ece3cf; --paper-2: #e3d8be; --card: #f6efdc;
+  --ink: #2c2a22; --ink-soft: #5d5640;
+  --red: #356b4f; --red-deep: #244c38;
+  --gold: #b5871f; --teal: #8a5a2b;
+  --line: #c8b78a; --shadow: rgba(50, 40, 20, 0.22);
+  --stub-bg: #2c2a22; --on-stub: #f6efdc; --on-red: #f6efdc;
+  --font-display: "Bookman Old Style", Georgia, "Times New Roman", serif;
+  --font-body: Georgia, "Times New Roman", serif;
+}
+
+/* D -- Blue Note: cool ivory, indigo, burnt orange, slate */
+html[data-theme="bluenote"] {
+  --paper: #eef0e6; --paper-2: #e3e6d8; --card: #f8f9f1;
+  --ink: #1c2740; --ink-soft: #46506a;
+  --red: #2f4a8c; --red-deep: #213664;
+  --gold: #d2742a; --teal: #3d7c87;
+  --line: #c2c7b3; --shadow: rgba(30, 40, 60, 0.18);
+  --stub-bg: #1c2740; --on-stub: #f8f9f1; --on-red: #f8f9f1;
+  --font-display: "Century Gothic", "Gill Sans", "Trebuchet MS", sans-serif;
+  --font-body: Verdana, "Segoe UI", Arial, sans-serif;
+}
+
+/* E -- Backstage (dark): charcoal, gold, cream text */
+html[data-theme="backstage"] {
+  --paper: #1b1916; --paper-2: #232019; --card: #2c2820;
+  --ink: #f1e6cd; --ink-soft: #b9ab8c;
+  --red: #d7a83c; --red-deep: #b3892a;
+  --gold: #ecc663; --teal: #79b3a3;
+  --line: #4a4334; --shadow: rgba(0, 0, 0, 0.45);
+  --stub-bg: #12110e; --on-stub: #f1e6cd; --on-red: #1b1916;
+  --font-display: "Arial Narrow", "Oswald", "Helvetica Neue", Arial, sans-serif;
+  --font-body: "Helvetica Neue", Arial, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--paper);
+  /* subtle paper grain via layered gradients */
+  background-image:
+    radial-gradient(circle at 20% 10%, rgba(255,255,255,0.35) 0, transparent 40%),
+    radial-gradient(circle at 85% 80%, rgba(180,140,70,0.10) 0, transparent 45%),
+    repeating-linear-gradient(0deg, rgba(120,90,40,0.025) 0 2px, transparent 2px 4px);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ----------------------------------------------------------------- masthead */
+.masthead {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  gap: 18px;
+  padding: 14px clamp(16px, 4vw, 48px);
+  background: var(--red);
+  color: var(--on-red);
+  border-bottom: 4px double var(--on-red);
+  box-shadow: 0 3px 0 var(--red-deep), 0 8px 18px var(--shadow);
+}
+.masthead-left { display: flex; flex-direction: column; justify-content: center; }
+.admit-one {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.45em;
+  color: var(--on-red);
+  border: 1px solid var(--on-red);
+  opacity: 0.85;
+  padding: 1px 8px;
+  width: max-content;
+  border-radius: 2px;
+  margin-bottom: 6px;
+}
+.title {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-stretch: condensed;
+  letter-spacing: 0.06em;
+  font-size: clamp(26px, 5vw, 46px);
+  line-height: 0.95;
+  margin: 0;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 0 var(--red-deep);
+}
+.subtitle {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin-top: 4px;
+  color: var(--on-red);
+  opacity: 0.85;
+}
+.masthead-right {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: var(--font-mono);
+}
+.serial { font-size: clamp(14px, 2.4vw, 20px); letter-spacing: 0.12em; color: var(--on-red); }
+.meta-line { font-size: 11px; color: var(--on-red); opacity: 0.8; margin-top: 4px; }
+
+/* --------------------------------------------------------------------- tabs */
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 0 clamp(8px, 3vw, 40px);
+  background: var(--paper-2);
+  border-bottom: 2px dashed var(--line);
+}
+.tab {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 15px;
+  color: var(--ink-soft);
+  padding: 13px 18px 11px;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color .12s, border-color .12s, background .12s;
+}
+.tab:hover { color: var(--ink); background: rgba(201,138,35,0.10); }
+.tab.is-active { color: var(--red); border-bottom-color: var(--red); }
+
+/* --------------------------------------------------------------------- main */
+#app {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(18px, 3vw, 34px) clamp(14px, 3vw, 28px) 60px;
+}
+.loading { text-align: center; font-family: var(--font-mono); padding: 80px 0; color: var(--ink-soft); }
+
+.view-head {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+  color: var(--red);
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 6px;
+  margin: 30px 0 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.view-head:first-child { margin-top: 0; }
+.view-head .count-pill {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  letter-spacing: 0;
+}
+
+/* ------------------------------------------------------------- stat tiles */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+}
+.tile {
+  position: relative;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 18px 16px 16px;
+  box-shadow: 3px 3px 0 var(--shadow);
+  overflow: hidden;
+}
+.tile::before { /* punched corner */
+  content: "";
+  position: absolute;
+  top: -9px; right: 14px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: inset 0 -2px 2px rgba(0,0,0,.08);
+}
+.tile .num {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 40px;
+  line-height: 1;
+  color: var(--ink);
+}
+.tile .label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  margin-top: 8px;
+}
+.tile.accent .num { color: var(--red); }
+.tile.accent2 .num { color: var(--teal); }
+
+/* ------------------------------------------------------------ ticket cards */
+.tickets { display: flex; flex-direction: column; gap: 16px; }
+
+.ticket {
+  position: relative;
+  display: flex;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 4px 4px 0 var(--shadow);
+  overflow: hidden;
+}
+/* the perforated stub on the left */
+.ticket .stub {
+  flex: 0 0 96px;
+  background: var(--stub-bg);
+  color: var(--on-stub);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 12px 6px;
+  position: relative;
+}
+.ticket .stub .mo {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.ticket .stub .day {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 38px;
+  line-height: 1;
+}
+.ticket .stub .yr {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  margin-top: 4px;
+  color: #d9c49a;
+}
+.ticket .stub .nodate {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: #d9c49a;
+}
+/* perforation line between stub and body */
+.ticket .stub::after {
+  content: "";
+  position: absolute;
+  right: -1px; top: 8px; bottom: 8px;
+  border-right: 2px dashed rgba(251,244,227,0.55);
+}
+/* notch circles top & bottom of the perforation */
+.ticket::before, .ticket::after {
+  content: "";
+  position: absolute;
+  left: 88px;
+  width: 16px; height: 16px;
+  background: var(--paper);
+  border-radius: 50%;
+  z-index: 2;
+}
+.ticket::before { top: -9px; }
+.ticket::after  { bottom: -9px; }
+
+.ticket .body {
+  flex: 1 1 auto;
+  padding: 14px 18px;
+  min-width: 0;
+}
+.ticket .headliner {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(19px, 3vw, 25px);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+}
+.ticket .support {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink-soft);
+  margin-top: 3px;
+}
+.ticket .support .w { color: var(--gold); font-weight: 700; }
+.ticket .venue {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  margin-top: 10px;
+  color: var(--ink);
+}
+.ticket .venue .city { color: var(--ink-soft); }
+.ticket .ticket-foot {
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.ticket .barcode {
+  height: 26px;
+  flex: 1 1 auto;
+  max-width: 240px;
+  background-image: repeating-linear-gradient(
+    90deg, var(--ink) 0 2px, transparent 2px 3px,
+    var(--ink) 3px 4px, transparent 4px 7px,
+    var(--ink) 7px 10px, transparent 10px 11px);
+  opacity: 0.8;
+}
+.ticket .setlist-link {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: var(--red);
+  border: 1px solid var(--red);
+  border-radius: 4px;
+  padding: 4px 9px;
+  white-space: nowrap;
+  transition: background .1s, color .1s, transform .08s;
+}
+.ticket .setlist-link:hover {
+  background: var(--red);
+  color: var(--on-red);
+  transform: translateY(-1px);
+}
+.ticket .setlist-link .ext { font-size: 11px; }
+/* exact (API-resolved) links are filled so they stand out from search links */
+.ticket .setlist-link.is-direct {
+  background: var(--red);
+  color: var(--on-red);
+}
+.ticket .setlist-link.is-direct:hover {
+  background: var(--red-deep);
+  border-color: var(--red-deep);
+}
+/* clickable band names inside tickets */
+.ticket .band-link {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: inherit;
+  text-decoration: none;
+}
+/* supporting acts get a dotted underline to signal they're clickable */
+.ticket .support .band-link { border-bottom: 1px dotted currentColor; }
+.ticket .support .band-link:hover { color: var(--red); border-bottom-style: solid; }
+/* the headliner is already prominent: underline only on hover */
+.ticket .headliner .band-link:hover { color: var(--red); text-decoration: underline; }
+/* clickable venue name -- same dotted-underline affordance as supporting acts */
+.ticket .venue-link {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  line-height: inherit;
+  border-bottom: 1px dotted currentColor;
+}
+.ticket .venue-link:hover { color: var(--red); border-bottom-style: solid; }
+.ticket .badge {
+  position: absolute;
+  top: 10px; right: 12px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 11px;
+  color: var(--red);
+  border: 2px solid var(--red);
+  border-radius: 4px;
+  padding: 2px 8px;
+  transform: rotate(6deg);
+  opacity: 0.85;
+}
+
+/* clickable rows (artists / venues lists) ----------------------------------- */
+.rowlist { display: flex; flex-direction: column; gap: 2px; }
+.rowitem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--gold);
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+  transition: transform .08s, box-shadow .08s, border-color .08s;
+}
+.rowitem:hover { transform: translateX(3px); box-shadow: 3px 3px 0 var(--shadow); border-left-color: var(--red); }
+.rowitem .rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  width: 30px;
+  flex: 0 0 30px;
+}
+.rowitem .name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.01em;
+  flex: 1 1 auto;
+  min-width: 0;            /* allow the name to shrink & ellipsis instead of overflowing */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rowitem .cnt {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--red);
+  flex: 0 0 auto;
+}
+.rowitem .cnt .x { color: var(--ink-soft); }
+
+/* ------------------------------------------------------------------ search */
+.searchbar { position: relative; margin-bottom: 8px; }
+.searchbar input {
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 16px;
+  padding: 14px 16px;
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: 8px;
+  color: var(--ink);
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+.searchbar input::placeholder { color: var(--ink-soft); }
+.search-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 18px; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 12px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.chip.is-active { background: var(--ink); color: var(--card); border-color: var(--ink); }
+.empty {
+  font-family: var(--font-mono);
+  color: var(--ink-soft);
+  text-align: center;
+  padding: 40px 0;
+}
+
+/* ---------------------------------------------------------------- detail */
+.detail-head {
+  background: var(--stub-bg);
+  color: var(--on-stub);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 18px;
+  box-shadow: 4px 4px 0 var(--shadow);
+}
+.detail-head .back {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--gold);
+  cursor: pointer;
+  background: none; border: none; padding: 0;
+  margin-bottom: 10px;
+}
+.detail-head h2 {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(24px, 4vw, 34px);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+.detail-head .aka {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: #e7d4ab;
+  margin-top: 8px;
+}
+.detail-head .aka .aka-tag {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 10px;
+  color: var(--stub-bg);
+  background: var(--gold);
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin-right: 8px;
+  transform: rotate(-1.5deg);
+}
+.detail-head .stat-line {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: #d9c49a;
+  margin-top: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+}
+.detail-head .stat-line b { color: var(--on-stub); }
+
+/* ------------------------------------------------------------------ charts */
+.chart-card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px 18px 10px;
+  box-shadow: 4px 4px 0 var(--shadow);
+  margin-bottom: 22px;
+}
+.chart-card h3 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 16px;
+  color: var(--ink);
+  margin: 0 0 12px;
+}
+.chart-card svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart-card .bar-rect { fill: var(--red); }
+.chart-card .bar-rect.alt { fill: var(--teal); }
+.chart-card .axis { stroke: var(--line); stroke-width: 1; }
+.chart-card .axis-text { font-family: var(--font-mono); font-size: 10px; fill: var(--ink-soft); }
+.chart-card .val-text  { font-family: var(--font-mono); font-size: 10px; fill: var(--ink); }
+.chart-card .line-path { fill: none; stroke: var(--teal); stroke-width: 2.5; }
+.chart-card .line-dot  { fill: var(--gold); stroke: var(--ink); stroke-width: 1; }
+
+/* --------------------------------------------------------- fun stat strips */
+.factgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+.fact {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 3px 3px 0 var(--shadow);
+  border-top: 4px solid var(--teal);
+}
+.fact .k {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+.fact .v {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 22px;
+  margin-top: 6px;
+  color: var(--ink);
+  line-height: 1.1;
+}
+.fact .sub { font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); margin-top: 4px; }
+
+/* milestone callouts (On This Day) */
+.milestone {
+  background: var(--card);
+  border: 1px dashed var(--gold);
+  border-left: 5px solid var(--gold);
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  margin-bottom: 10px;
+}
+.milestone .tag {
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+}
+.milestone .txt { margin-top: 3px; color: var(--ink); }
+.milestone .txt b { color: var(--red); }
+
+/* ------------------------------------------------------------------ footer */
+.footer {
+  border-top: 2px dashed var(--line);
+  padding: 16px clamp(16px, 4vw, 48px);
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+.footer code { background: rgba(32,40,63,0.08); padding: 1px 5px; border-radius: 3px; }
+
+/* ------------------------------------------------------------ theme picker */
+.theme-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+.theme-picker .tp-label {
+  font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.swatch {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-display); font-weight: 700; font-size: 12px;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 5px 11px 4px;
+  cursor: pointer;
+  transition: transform .08s, box-shadow .08s, border-color .08s;
+}
+.swatch:hover { transform: translateY(-1px); box-shadow: 2px 2px 0 var(--shadow); }
+.swatch.is-active { border-color: var(--red); box-shadow: 2px 2px 0 var(--shadow); }
+.swatch .dots { display: inline-flex; }
+.swatch .dots i {
+  width: 11px; height: 11px; border-radius: 50%;
+  display: inline-block; margin-left: -4px;
+  border: 1px solid rgba(0,0,0,0.18);
+}
+.swatch .dots i:first-child { margin-left: 0; }
+
+/* two-column helper for overview */
+.cols2 { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; }
+/* let the 1fr tracks shrink so long names truncate instead of widening the column */
+.cols2 > div { min-width: 0; }
+@media (max-width: 720px) {
+  .cols2 { grid-template-columns: 1fr; }
+  .ticket .stub { flex-basis: 78px; }
+  .ticket::before, .ticket::after { left: 70px; }
+}

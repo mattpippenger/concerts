@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "concert-preview",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\matt.pippenger\\AppData\\Local\\Temp\\concert_serve.ps1"],
+      "port": 8724
+    }
+  ]
+}

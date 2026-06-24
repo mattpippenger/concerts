@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(py --version)",
+      "PowerShell(& \"C:\\\\Users\\\\matt.pippenger\\\\Desktop\\\\Concert App\\\\build-data.ps1\")",
+      "Bash(cd \"/c/Users/matt.pippenger/Desktop/Concert App/_xlsx_extract\" && grep -n \"Total Shows\" /tmp/ss.txt; echo \"--- find that idx in Counts sheet & COUNTA formulas ---\"; cat xl/worksheets/sheet2.xml | sed 's/<c /\\\\n<c /g' | grep -i 'COUNTA\\\\|SUM\\(' | head)",
+      "mcp__Claude_Preview__preview_start",
+      "PowerShell($ErrorActionPreference='Continue'; try { $l = New-Object System.Net.HttpListener; $l.Prefixes.Add\\(\"http://localhost:8723/\"\\); $l.Start\\(\\); Write-Host \"OK started\"; $l.Stop\\(\\) } catch { Write-Host \"FAIL:\" $_.Exception.Message })",
+      "PowerShell(Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','C:\\\\Users\\\\matt.pippenger\\\\Desktop\\\\Concert App\\\\.claude\\\\serve.ps1' -WindowStyle Hidden; Start-Sleep -Seconds 2; try { $r = Invoke-WebRequest \"http://localhost:8723/index.html\" -UseBasicParsing; Write-Host \"index.html:\" $r.StatusCode $r.Content.Length \"bytes\" } catch { Write-Host \"ERR index:\" $_.Exception.Message }; foreach\\($f in 'styles.css','app.js','config.js','data.js'\\){ try { $r=Invoke-WebRequest \"http://localhost:8723/$f\" -UseBasicParsing; Write-Host \"$f :\" $r.StatusCode $r.Content.Length } catch { Write-Host \"ERR $f :\" $_.Exception.Message } })",
+      "PowerShell($out=\"C:\\\\Users\\\\matt.pippenger\\\\Desktop\\\\Concert App\\\\.claude\\\\serve.log\"; Start-Process powershell -ArgumentList '-NoProfile','-ExecutionPolicy','Bypass','-File','C:\\\\Users\\\\matt.pippenger\\\\Desktop\\\\Concert App\\\\.claude\\\\serve.ps1' -RedirectStandardOutput $out -RedirectStandardError \"$out.err\" -WindowStyle Hidden; Start-Sleep -Seconds 2; Write-Host \"--- stdout ---\"; if\\(Test-Path $out\\){Get-Content $out}; Write-Host \"--- stderr ---\"; if\\(Test-Path \"$out.err\"\\){Get-Content \"$out.err\"})",
+      "PowerShell($out=\"C:\\\\Users\\\\matt.pippenger\\\\Desktop\\\\Concert App\\\\.claude\\\\serve.log\"; $args='-NoProfile -ExecutionPolicy Bypass -File \"C:\\\\Users\\\\matt.pippenger\\\\Desktop\\\\Concert App\\\\.claude\\\\serve.ps1\"'; Start-Process powershell -ArgumentList $args -RedirectStandardOutput $out -RedirectStandardError \"$out.err\" -WindowStyle Hidden; Start-Sleep -Seconds 2; try { $r=Invoke-WebRequest \"http://localhost:8723/index.html\" -UseBasicParsing; Write-Host \"index:\" $r.StatusCode $r.Content.Length } catch { Write-Host \"ERR:\" $_.Exception.Message; Get-Content \"$out.err\" })",
+      "PowerShell($c = Get-NetTCPConnection -LocalPort 8723 -State Listen -ErrorAction SilentlyContinue; $c | Select-Object OwningProcess; foreach\\($conn in $c\\){ try{ Stop-Process -Id $conn.OwningProcess -Force; Write-Host \"killed\" $conn.OwningProcess }catch{ Write-Host \"fail\" $_.Exception.Message } }; Start-Sleep 1; Write-Host \\(\"still listening: \" + [bool]\\(Get-NetTCPConnection -LocalPort 8723 -State Listen -ErrorAction SilentlyContinue\\)\\))",
+      "Read(//c/Users/matt.pippenger/Desktop/**)",
+      "Bash(rm -rf \"/c/Users/matt.pippenger/Desktop/Concert App/_xlsx_extract\")"
+    ]
+  }
+}
