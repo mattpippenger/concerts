@@ -588,11 +588,29 @@
     // bands seen once
     var once = ARTISTS.filter(function (a) { return a.count === 1; }).length;
     facts.push(fact("One-and-done bands", once, "seen exactly once"));
+    // most concerts in a single month
+    var monthCount = {};
+    DATED.forEach(function (s) {
+      if (s.year && s.month) {
+        var mk = s.year + '-' + s.month;
+        monthCount[mk] = (monthCount[mk] || 0) + 1;
+      }
+    });
+    var topMonthKey = Object.keys(monthCount).sort(function (a, b) { return monthCount[b] - monthCount[a]; })[0];
+    if (topMonthKey) {
+      var tmParts = topMonthKey.split('-');
+      var tmYear = +tmParts[0], tmMonth = +tmParts[1];
+      facts.push(fact("Biggest month", MONTHS_LONG[tmMonth - 1] + " " + tmYear,
+        monthCount[topMonthKey] + " shows", {nav: 'year', year: tmYear}));
+    }
     // most common state/city
     var stateCount = {};
     SHOWS.forEach(function (s) { if (s.state) stateCount[s.state] = (stateCount[s.state] || 0) + 1; });
     var topState = Object.keys(stateCount).sort(function (a, b) { return stateCount[b] - stateCount[a]; })[0];
     if (topState) facts.push(fact("Home turf", topState, stateCount[topState] + " shows", {nav: 'search', q: topState}));
+    // unique states
+    var uniqueStates = Object.keys(stateCount).length;
+    if (uniqueStates) facts.push(fact("States visited", uniqueStates, "different states"));
     // milestone shows
     [50, 100, 150, 200, 250, 300].forEach(function (m) {
       var s = DATED[m - 1];

@@ -68,8 +68,8 @@ window.CONCERT_CONFIG = {
       aka: ['Deer Creek Music Center', 'Verizon Wireless Music Center', 'Klipsch Music Center']
     },
     'Bankers Life Fieldhouse (Conseco)': {
-      name: 'Bankers Life Fieldhouse',
-      aka: ['Conseco Fieldhouse']
+      name: 'Gainbridge Fieldhouse',
+      aka: ['Bankers Life Fieldhouse', 'Conseco Fieldhouse']
     },
     'Old National Centre (The Murat)': {
       name: 'Old National Centre',
@@ -92,15 +92,18 @@ window.CONCERT_CONFIG = {
       aka: ['Purdue University']
     },
     'Hi-Fi (Annex)': {
-      name: 'Hi-Fi',
-      aka: ['Hi-Fi Annex']
+      name: 'Hi-Fi Annex',
+      aka: ['Hi-Fi']
     },
+    'The Hi-Fi': { name: 'Hi-Fi', aka: ['The Hi-Fi'] },
     'Holiday Park (Rock the Ruins)': {
       name: 'Holiday Park',
       aka: ['Rock the Ruins']
     },
     // distinct cities -- kept separate on purpose (do NOT merge to "House of Blues")
     'House of Blues (CHI)': { name: 'House of Blues (Chicago)', aka: [] },
-    'House of Blues (CLE)': { name: 'House of Blues (Cleveland)', aka: [] }
+    'House of Blues (CLE)': { name: 'House of Blues (Cleveland)', aka: [] },
+    'Lawn at White River': { name: 'Everwise Amphitheater', aka: ['Lawn at White River'] },
+    'Mars': { name: 'Axis Nightclub', aka: ['Mars'] }
   }
 };
