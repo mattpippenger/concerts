@@ -105,5 +105,15 @@ window.CONCERT_CONFIG = {
     'House of Blues (CLE)': { name: 'House of Blues (Cleveland)', aka: [] },
     'Lawn at White River': { name: 'Everwise Amphitheater', aka: ['Lawn at White River'] },
     'Mars': { name: 'Axis Nightclub', aka: ['Mars'] }
+  },
+
+  // setlistOverrides: force a specific show to a specific setlist.fm page. Use this
+  // when the auto-resolver guesses wrong (e.g. festival days like Summerfest where an
+  // artist has several setlists on the same date). It always wins over the API result.
+  //   key   = "Artist|YYYY-MM-DD" exactly as the show is recorded (case-insensitive)
+  //   value = the full setlist.fm URL
+  // Applied at display time -- just reload index.html, no rebuild needed.
+  setlistOverrides: {
+    'Cracker|2013-06-29': 'https://www.setlist.fm/setlist/cracker/2013/henry-w-maier-festival-park-us-cellular-connection-stage-milwaukee-wi-4bd90bb2.html'
   }
 };

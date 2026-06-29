@@ -22,13 +22,17 @@ $IndexFile  = Join-Path $ScriptDir 'index.html'
 $CacheFile  = Join-Path $ScriptDir 'setlist-cache.json'
 
 # ---- setlist.fm direct links (optional) ------------------------------------
-# Get a FREE key at https://www.setlist.fm/settings/api and paste it below.
-# While this is blank, every show just uses a setlist.fm SEARCH link (no network).
+# The API key is read from "setlist-api-key.txt" next to this script (that file is
+# git-ignored so the key never gets committed). Get a FREE key at
+# https://www.setlist.fm/settings/api and paste it as the only line of that file.
+# Without the file, every show just uses a setlist.fm SEARCH link (no network).
 # With a key, each show is resolved at refresh time: if the search finds EXACTLY
 # one setlist, the ticket links straight to that page; otherwise it falls back to
 # the search link. Results are cached in setlist-cache.json so repeat refreshes
 # only query shows that are new or changed.
-$SetlistApiKey = 'EVsEvoIy7c3DjL6ZGIrfie5ZPtVpCN_fWSTV'
+$SetlistApiKey = ''
+$KeyFile = Join-Path $ScriptDir 'setlist-api-key.txt'
+if (Test-Path $KeyFile) { $SetlistApiKey = (Get-Content $KeyFile -Raw).Trim() }
 
 # NOTE: band names are kept EXACTLY as recorded in the spreadsheet (e.g. each show
 # shows the band Sammy actually toured under). Logical *grouping* (so all of Sammy

@@ -357,7 +357,7 @@ window.CONCERT_DATA = [
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
         "city":  "Noblesville",
         "state":  "IN",
-        "setlistUrl":  "https://www.setlist.fm/setlist/jimmy-buffett/2000/deer-creek-music-center-noblesville-in-33d808d5.html"
+        "setlistUrl":  ""
     },
     {
         "headliner":  "Counting Crows",
@@ -2987,12 +2987,12 @@ window.CONCERT_DATA = [
                       "Tedeschi \u0026 Trucks Band",
                       "The London Souls"
                   ],
-        "date":  "2013-08-12",
+        "date":  "2013-08-13",
         "year":  2013,
         "venue":  "Lawn at White River",
         "city":  "Indianapolis",
         "state":  "IN",
-        "setlistUrl":  ""
+        "setlistUrl":  "https://www.setlist.fm/setlist/the-black-crowes/2013/farm-bureau-insurance-lawn-at-white-river-state-park-indianapolis-in-2bc634e6.html"
     },
     {
         "headliner":  "North Mississippi Allstars",
@@ -4321,10 +4321,22 @@ window.CONCERT_DATA = [
         "city":  "Indianapolis",
         "state":  "IN",
         "setlistUrl":  "https://www.setlist.fm/setlist/sammy-hagar/2026/ruoff-music-center-noblesville-in-434a8f83.html"
+    },
+    {
+        "headliner":  "Dave Matthews Band",
+        "bands":  [
+                      "Dave Matthews Band"
+                  ],
+        "date":  "2026-06-27",
+        "year":  2026,
+        "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
+        "city":  "Indianapolis",
+        "state":  "IN",
+        "setlistUrl":  "https://www.setlist.fm/setlist/dave-matthews-band/2026/ruoff-music-center-noblesville-in-5b4a63d4.html"
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-06-24 13:46",
+    "generatedAt":  "2026-06-29 10:01",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  337
+    "showCount":  338
 };

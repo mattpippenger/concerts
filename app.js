@@ -50,6 +50,18 @@
     return { name: raw, aka: [] };
   }
 
+  // Manual setlist.fm overrides (config.js): "artist|date" -> url. Wins over the
+  // auto-resolved link (e.g. festival days where the API can't pick the right one).
+  var SETLIST_OVERRIDES = {};
+  (function () {
+    var src = (window.CONCERT_CONFIG && window.CONCERT_CONFIG.setlistOverrides) || {};
+    for (var k in src) { if (src.hasOwnProperty(k)) SETLIST_OVERRIDES[k.toLowerCase()] = src[k]; }
+  })();
+  function setlistOverrideFor(headliner, date) {
+    if (!date) return null;
+    return SETLIST_OVERRIDES[(String(headliner || "") + "|" + date).toLowerCase()] || null;
+  }
+
   // ------------------------------------------------------------- data prep
   var SHOWS = RAW.map(function (s, i) {
     var p = parts(s.date);
@@ -67,7 +79,8 @@
       venueRaw: s.venue || "",   // original spreadsheet text (kept for search)
       city: s.city || "",
       state: s.state || "",
-      setlistUrl: s.setlistUrl || null   // direct setlist.fm link (when resolved)
+      // manual override wins; else the build-time resolved link; else search fallback
+      setlistUrl: setlistOverrideFor(s.headliner, s.date) || s.setlistUrl || null
     };
   });
 

@@ -1,3 +1,6 @@
 # Claude Code working files
 .claude/serve.log
 .claude/serve.log.err
+
+# Secrets -- never commit the setlist.fm API key
+setlist-api-key.txt
