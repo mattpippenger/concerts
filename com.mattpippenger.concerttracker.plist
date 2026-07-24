@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!--
+  launchd job: runs auto-update.sh every Sunday at 9:00 AM.
+
+  INSTALL (run these commands once on your Mac Mini):
+    1. Edit the <string>/Users/matt.pippenger/...</string> path below to match
+       wherever you cloned the concerts repo on your Mac.
+    2. Copy this file to ~/Library/LaunchAgents/
+         cp com.mattpippenger.concerttracker.plist ~/Library/LaunchAgents/
+    3. Load it:
+         launchctl load ~/Library/LaunchAgents/com.mattpippenger.concerttracker.plist
+    4. (Optional) test it immediately:
+         launchctl start com.mattpippenger.concerttracker
+    5. Check the log:
+         cat ~/Library/Logs/concert-tracker-update.log
+
+  TO UNINSTALL:
+    launchctl unload ~/Library/LaunchAgents/com.mattpippenger.concerttracker.plist
+-->
+<dict>
+  <key>Label</key>
+  <string>com.mattpippenger.concerttracker</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>/Users/matt.pippenger/PATH/TO/concerts/auto-update.sh</string>
+  </array>
+
+  <!-- Run every Sunday at 9:00 AM -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Weekday</key>  <integer>0</integer>
+    <key>Hour</key>     <integer>9</integer>
+    <key>Minute</key>   <integer>0</integer>
+  </dict>
+
+  <key>StandardOutPath</key>
+  <string>/Users/matt.pippenger/Library/Logs/concert-tracker-update.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/matt.pippenger/Library/Logs/concert-tracker-update.log</string>
+
+  <!-- Run the job even if the scheduled time was missed (e.g. Mac was asleep) -->
+  <key>RunAtLoad</key>  <false/>
+</dict>
+</plist>

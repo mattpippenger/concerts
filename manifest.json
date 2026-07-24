@@ -1,7 +1,7 @@
 {
-  "name": "Concert Tracker",
+  "name": "Pip's Concert Tracker",
   "short_name": "Concerts",
-  "description": "Matt's lifetime of live music — one stub at a time",
+  "description": "Pip's lifetime of live music — one stub at a time",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

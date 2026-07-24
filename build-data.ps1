@@ -3,19 +3,35 @@
 
   Reads the live Concerts workbook, parses the "Master Show List" sheet,
   cleans the data, and writes data.js (consumed by index.html via <script src>).
-  Then opens the dashboard in the default browser.
+  Then opens the dashboard in the default browser (unless -NoOpen is passed).
 
   Usage:  double-click "Refresh & Open.bat", or:
           powershell -ExecutionPolicy Bypass -File build-data.ps1
+          pwsh -NonInteractive -File build-data.ps1 -NoOpen   (Mac / headless)
 
   NOTE: the artist alias map below is kept in sync (by hand) with the one in
   config.js. PowerShell can't read JS, so any name-merge must be added in BOTH.
 #>
+param(
+  [switch]$NoOpen   # skip launching the browser (used by auto-update.sh on Mac)
+)
 
 $ErrorActionPreference = 'Stop'
 
 # ---- settings --------------------------------------------------------------
-$SourcePath = 'C:\Users\matt.pippenger\Dropbox\Concerts.xlsm'
+# Detect platform and set path to the Dropbox spreadsheet accordingly.
+if ($IsWindows -or (-not (Test-Path variable:IsWindows))) {
+  $SourcePath = 'C:\Users\matt.pippenger\Dropbox\Concerts.xlsm'
+} else {
+  # Mac: try both the legacy Dropbox path and the newer CloudStorage location
+  $macPaths = @(
+    (Join-Path $HOME 'Dropbox/Concerts.xlsm'),
+    (Join-Path $HOME 'Library/CloudStorage/Dropbox/Concerts.xlsm'),
+    (Join-Path $HOME 'Library/CloudStorage/Dropbox-Personal/Concerts.xlsm')
+  )
+  $SourcePath = $macPaths | Where-Object { Test-Path $_ } | Select-Object -First 1
+  if (-not $SourcePath) { $SourcePath = Join-Path $HOME 'Dropbox/Concerts.xlsm' }  # fallback for error msg
+}
 $ScriptDir  = Split-Path -Parent $MyInvocation.MyCommand.Path
 $OutFile    = Join-Path $ScriptDir 'data.js'
 $IndexFile  = Join-Path $ScriptDir 'index.html'
@@ -302,10 +318,12 @@ finally {
 }
 
 # --- launch dashboard ---
-if (Test-Path $IndexFile) {
-  Write-Host "  opening dashboard..." -ForegroundColor Cyan
-  Start-Process $IndexFile
-} else {
-  Write-Host "  (index.html not found yet -- data.js is ready)" -ForegroundColor Yellow
+if (-not $NoOpen) {
+  if (Test-Path $IndexFile) {
+    Write-Host "  opening dashboard..." -ForegroundColor Cyan
+    Start-Process $IndexFile
+  } else {
+    Write-Host "  (index.html not found yet -- data.js is ready)" -ForegroundColor Yellow
+  }
 }
 Write-Host ""
