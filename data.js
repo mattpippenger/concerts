@@ -45,7 +45,33 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/eagles/1995/deer-creek-music-center-noblesville-in-3dbd5db.html",
         "songs":  [
-
+                      "Hotel California",
+                      "Victim of Love",
+                      "New Kid in Town",
+                      "Wasted Time",
+                      "Pretty Maids All in a Row",
+                      "The Girl From Yesterday",
+                      "I Can\u0027t Tell You Why",
+                      "Ordinary Average Guy",
+                      "Lyin\u0027 Eyes",
+                      "One of These Nights",
+                      "Tequila Sunrise",
+                      "Help Me Through the Night",
+                      "The Heart of the Matter",
+                      "Love Will Keep Us Alive",
+                      "You Belong to the City",
+                      "The Boys of Summer",
+                      "Funk #49",
+                      "Dirty Laundry",
+                      "Life\u0027s Been Good",
+                      "All She Wants to Do Is Dance",
+                      "Heartache Tonight",
+                      "Life in the Fast Lane",
+                      "Get Over It",
+                      "Rocky Mountain Way",
+                      "Already Gone",
+                      "Desperado",
+                      "Take It Easy"
                   ]
     },
     {
@@ -473,7 +499,9 @@ window.CONCERT_DATA = [
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/sammy-hagar-and-the-wabos/1999/allen-county-war-memorial-coliseum-fort-wayne-in-43e9abe3.html",
-        "songs":  "Marching to Mars"
+        "songs":  [
+                      "Marching to Mars"
+                  ]
     },
     {
         "headliner":  "Dave Matthews Band",
@@ -1468,7 +1496,9 @@ window.CONCERT_DATA = [
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/big-head-todd-and-the-monsters/2002/indy-summer-stages-indianapolis-in-73999255.html",
-        "songs":  "Ellis Island"
+        "songs":  [
+                      "Ellis Island"
+                  ]
     },
     {
         "headliner":  "Spin Doctors",
@@ -2383,7 +2413,7 @@ window.CONCERT_DATA = [
         "city":  "Indianapolis",
         "state":  "IN",
         "tourName":  "",
-        "setlistUrl":  "",
+        "setlistUrl":  "https://www.setlist.fm/setlist/sammy-hagar/2003/old-national-centre-murat-theatre-indianapolis-in-23d904ff.html",
         "songs":  [
 
                   ]
@@ -9975,7 +10005,7 @@ window.CONCERT_DATA = [
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-07-24 15:50",
+    "generatedAt":  "2026-07-24 15:59",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
     "showCount":  339
 };
