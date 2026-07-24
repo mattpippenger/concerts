@@ -237,6 +237,18 @@
   var superfanGroups = {};
   Object.keys(bandIndex).forEach(function (g) { superfanGroups[g] = bandIndex[g].length; });
 
+  // ---- song frequency (from shows with setlist data) ---------------------
+  var SONG_COUNTS = {};
+  SHOWS.forEach(function (s) {
+    (s.songs || []).forEach(function (song) {
+      SONG_COUNTS[song] = (SONG_COUNTS[song] || 0) + 1;
+    });
+  });
+  var TOP_SONGS = Object.keys(SONG_COUNTS)
+    .map(function (s) { return { name: s, count: SONG_COUNTS[s] }; })
+    .sort(function (a, b) { return b.count - a.count || a.name.localeCompare(b.name); });
+  var SHOWS_WITH_SONGS = SHOWS.filter(function (s) { return s.songs && s.songs.length; }).length;
+
   // years
   var yearCounts = {};
   SHOWS.forEach(function (s) { if (s.year) yearCounts[s.year] = (yearCounts[s.year] || 0) + 1; });
@@ -764,6 +776,12 @@
         '<div class="chart-card"><h3>Top bands</h3>' + barChartHorizontal(topA) + '</div>' +
         '<div class="chart-card"><h3>Top venues</h3>' + barChartHorizontal(topV, { alt: true }) + '</div>' +
       '</div>' +
+      (TOP_SONGS.length
+        ? '<div class="chart-card"><h3>Most-heard songs live <span class="count-pill">' +
+            SHOWS_WITH_SONGS + ' show' + (SHOWS_WITH_SONGS !== 1 ? 's' : '') + ' with setlist data</span></h3>' +
+            barChartHorizontal(TOP_SONGS.slice(0, 15).map(function (s) { return { label: s.name, value: s.count }; })) +
+          '</div>'
+        : '') +
       funStats();
     wireFacts();
   }
@@ -790,6 +808,11 @@
       var gapTo = gap.to.split('-');
       facts.push(fact("Longest dry spell", gap.days + " days", prettyDate(gap.from) + " → " + prettyDate(gap.to),
         {nav: 'otd', month: +gapTo[1], day: +gapTo[2]}));
+    }
+    // most-heard song
+    if (TOP_SONGS[0]) {
+      facts.push(fact("Most-heard song", TOP_SONGS[0].name, TOP_SONGS[0].count + " times live",
+        { nav: 'song', name: TOP_SONGS[0].name }));
     }
     // bands seen once
     var once = ARTISTS.filter(function (a) { return a.count === 1; }).length;
@@ -850,10 +873,28 @@
           searchState.q = b.getAttribute('data-q');
           searchState.year = null;
           setView('search');
+        } else if (nav === 'song') {
+          viewSongShows(b.getAttribute('data-name'));
         }
       });
     });
   }
+
+  function viewSongShows(song) {
+    var list = SHOWS.filter(function (s) { return (s.songs || []).indexOf(song) >= 0; });
+    list = list.slice().sort(function (a, b) { return (a.date || '') < (b.date || '') ? 1 : -1; });
+    app.innerHTML =
+      '<div class="detail-head"><div class="detail-head-text">' +
+        '<button class="back" id="song-back">&larr; back</button>' +
+        '<h2>&#127925; ' + esc(song) + '</h2>' +
+        '<div class="stat-line"><span>Heard live</span> &middot; <span>' +
+          list.length + ' time' + (list.length !== 1 ? 's' : '') + '</span></div>' +
+      '</div></div>' +
+      ticketsHtml(list, {});
+    el('song-back').addEventListener('click', function () { setView('timeline'); });
+    wireRows();
+  }
+
   function longestGap() {
     var best = null;
     for (var i = 1; i < DATED.length; i++) {

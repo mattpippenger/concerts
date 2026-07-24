@@ -80,8 +80,8 @@ function Clean-Text {
   return $v
 }
 
-# Load the setlist cache as a hashtable (key -> {url, tourName}).
-# Old-format entries (plain strings) are read as {url=str, tourName=''}.
+# Load the setlist cache as a hashtable (key -> {url, tourName, songs}).
+# Old-format entries (plain strings or objects without songs) are upgraded transparently.
 function Load-Cache {
   param([string]$Path)
   $h = @{}
@@ -91,9 +91,11 @@ function Load-Cache {
       foreach ($p in $obj.PSObject.Properties) {
         $v = $p.Value
         if ($v -is [string]) {
-          $h[$p.Name] = @{ url = $v; tourName = '' }
+          $h[$p.Name] = @{ url = $v; tourName = ''; songs = @() }
         } else {
-          $h[$p.Name] = @{ url = [string]$v.url; tourName = [string]$v.tourName }
+          $songs = @()
+          if ($v.songs) { $songs = @([string[]]$v.songs) }
+          $h[$p.Name] = @{ url = [string]$v.url; tourName = [string]$v.tourName; songs = $songs }
         }
       }
     } catch { Write-Host "  (couldn't read setlist cache; starting fresh)" -ForegroundColor Yellow }
@@ -101,11 +103,46 @@ function Load-Cache {
   return $h
 }
 
-# Query setlist.fm; return @{url; tourName} when exactly one setlist is found,
-# @{url=''; tourName=''} for no/ambiguous match, or $null on transient errors.
+# Flatten all songs from a setlist API object's sets.set[].song[] into a string array.
+function Get-Songs {
+  param($Setlist)
+  $songs = New-Object System.Collections.Generic.List[string]
+  if ($null -ne $Setlist -and $Setlist.sets -and $Setlist.sets.set) {
+    foreach ($set in @($Setlist.sets.set)) {
+      if ($set.song) {
+        foreach ($song in @($set.song)) {
+          if (-not [string]::IsNullOrEmpty($song.name)) { $songs.Add([string]$song.name) }
+        }
+      }
+    }
+  }
+  return @($songs)
+}
+
+# Fetch songs for a show whose setlist URL is already known (backfill pass).
+# Returns string[] on success, @() on 404, or $null on transient error.
+function Get-SetlistSongs {
+  param([string]$Url, [string]$ApiKey)
+  if ($Url -notmatch '-([0-9a-f]+)\.html$') { return $null }
+  $id = $matches[1]
+  $headers = @{ 'x-api-key' = $ApiKey; 'Accept' = 'application/json' }
+  try {
+    $resp = Invoke-RestMethod -Uri "https://api.setlist.fm/rest/1.0/setlist/$id" `
+                              -Headers $headers -Method Get -TimeoutSec 20
+    return Get-Songs $resp
+  } catch {
+    $code = $null
+    try { $code = [int]$_.Exception.Response.StatusCode } catch {}
+    if ($code -eq 404) { return @() }
+    return $null   # transient — leave unsaved, retry next run
+  }
+}
+
+# Query setlist.fm; return @{url; tourName; songs} when exactly one setlist is found,
+# @{url=''; tourName=''; songs=@()} for no/ambiguous match, or $null on transient errors.
 function Resolve-Setlist {
   param([string]$Artist, [string]$DateIso, [string]$ApiKey)
-  $empty = @{ url = ''; tourName = '' }
+  $empty = @{ url = ''; tourName = ''; songs = @() }
   if ([string]::IsNullOrEmpty($Artist) -or [string]::IsNullOrEmpty($DateIso)) { return $empty }
   $apiDate = ''
   try { $apiDate = ([datetime]$DateIso).ToString('dd-MM-yyyy') } catch { return $empty }
@@ -120,7 +157,7 @@ function Resolve-Setlist {
       if ($first -and $first.url) {
         $tourName = ''
         if ($first.tour -and $first.tour.name) { $tourName = [string]$first.tour.name }
-        return @{ url = [string]$first.url; tourName = $tourName }
+        return @{ url = [string]$first.url; tourName = $tourName; songs = Get-Songs $first }
       }
     }
     return $empty   # zero or multiple matches -> use search fallback
@@ -250,6 +287,7 @@ try {
       state      = $state
       tourName   = ''   # filled from setlist.fm API when available
       setlistUrl = ''   # filled below when a direct setlist.fm link is found
+      songs      = @()  # setlist songs, filled below when available
     })
     $rowCount++
   }
@@ -265,7 +303,7 @@ try {
     Write-Host "  resolving setlist.fm links..." -ForegroundColor Cyan
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
     $cache = Load-Cache -Path $CacheFile
-    $direct = 0; $queries = 0; $errors = 0
+    $direct = 0; $queries = 0; $errors = 0; $songShows = 0
     foreach ($s in $shows) {
       if ([string]::IsNullOrEmpty($s.date)) { continue }   # need a date to match precisely
       $key = "$($s.headliner)|$($s.date)|$($s.venue)"
@@ -273,6 +311,17 @@ try {
         $cached = $cache[$key]
         $s.setlistUrl = $cached.url
         $s.tourName   = $cached.tourName
+        $s.songs      = @($cached.songs)
+        # backfill songs for cached entries that have a URL but songs not yet fetched
+        if ($s.setlistUrl -and $cached.songs.Count -eq 0) {
+          $fetched = Get-SetlistSongs -Url $s.setlistUrl -ApiKey $SetlistApiKey
+          if ($null -ne $fetched) {
+            $s.songs = $fetched
+            $cache[$key].songs = $fetched
+            Start-Sleep -Milliseconds 600
+          }
+          $queries++
+        }
       } else {
         $result = Resolve-Setlist -Artist $s.headliner -DateIso $s.date -ApiKey $SetlistApiKey
         if ($null -eq $result) { $errors++ }   # transient error: don't cache, retry next run
@@ -280,17 +329,19 @@ try {
           $cache[$key]  = $result
           $s.setlistUrl = $result.url
           $s.tourName   = $result.tourName
+          $s.songs      = @($result.songs)
           Start-Sleep -Milliseconds 600        # stay under setlist.fm's ~2 req/sec limit
         }
         $queries++
       }
       if ($s.setlistUrl) { $direct++ }
+      if ($s.songs.Count -gt 0) { $songShows++ }
     }
     # persist cache
     try {
-      ($cache | ConvertTo-Json -Depth 3) | Set-Content -Path $CacheFile -Encoding UTF8
+      ($cache | ConvertTo-Json -Depth 5) | Set-Content -Path $CacheFile -Encoding UTF8
     } catch { Write-Host "  (couldn't save setlist cache)" -ForegroundColor Yellow }
-    Write-Host "  direct setlist links: $direct  (live queries this run: $queries$(if($errors){"; $errors errored"}))" -ForegroundColor Green
+    Write-Host "  direct setlist links: $direct  songs tracked: $songShows shows  (queries this run: $queries$(if($errors){"; $errors errored"}))" -ForegroundColor Green
   }
 
   # --- write data.js (UTF-8, no BOM) ---
