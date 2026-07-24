@@ -758,6 +758,8 @@ button.fact-link:hover { border-top-color: var(--red); transform: translateY(-2p
 /* ---------------------------------------------------------- hamburger nav (mobile) */
 .nav-toggle {
   display: none;
+  appearance: none;
+  -webkit-appearance: none;
   background: transparent;
   border: 1px solid rgba(251, 228, 200, 0.7);
   color: var(--on-red);
@@ -769,6 +771,7 @@ button.fact-link:hover { border-top-color: var(--red); transform: translateY(-2p
   align-self: center;
   flex-shrink: 0;
   transition: background .12s;
+  -webkit-tap-highlight-color: transparent;
 }
 .nav-toggle:hover { background: rgba(255,255,255,0.12); }
 
@@ -808,6 +811,9 @@ button.fact-link:hover { border-top-color: var(--red); transform: translateY(-2p
 @media (max-width: 640px) {
   .nav-toggle { display: block; }
   .tabs { display: none; }
+  .masthead-right .serial,
+  .masthead-right .meta-line { display: none; }
+  .masthead-right { justify-content: center; }
 }
 
 @media (max-width: 720px) {
