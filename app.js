@@ -111,6 +111,55 @@
     return s.tourName || TOURS[s.headliner + '|' + (s.date || '') + '|' + s.venueRaw] || null;
   }
 
+  // ------------------------------------------------------------------ badges
+  var CITY_COORDS = {
+    'Baltimore|MD':       [39.2904, -76.6122],
+    'Bloomington|IN':     [39.1653, -86.5264],
+    'Cabo San Lucas|MX':  [22.8905, -109.9167],
+    'Carmel|IN':          [39.9784, -86.1180],
+    'Chicago|IL':         [41.8781, -87.6298],
+    'Cincinnati|OH':      [39.1031, -84.5120],
+    'Cincinatti|OH':      [39.1031, -84.5120],
+    'Cleveland|OH':       [41.4993, -81.6944],
+    'Columbia|MD':        [39.2037, -76.8610],
+    'Columbus|OH':        [39.9612, -82.9988],
+    'Fishers|IN':         [39.9578, -85.9683],
+    'Ft. Wayne|IN':       [41.0793, -85.1394],
+    'Indianapolis|IN':    [39.7684, -86.1581],
+    'Merrillville|IN':    [41.4745, -87.3325],
+    'Merrilville|IN':     [41.4745, -87.3325],
+    'Milwaukee|WI':       [43.0389, -88.0326],
+    'Morrison|CO':        [39.6533, -105.1911],
+    'Nashville|IN':       [39.2059, -86.2472],
+    'Noblesville|IN':     [40.0456, -85.9066],
+    'Phoenix|AZ':         [33.4484, -112.0740],
+    'South Bend|IN':      [41.6764, -86.2520],
+    'West Lafayette|IN':  [40.4259, -86.9081],
+  };
+  var HOME_COORDS = [39.9578, -85.9683]; // Fishers, IN
+
+  function haversineMiles(lat1, lon1, lat2, lon2) {
+    var R = 3959, rad = Math.PI / 180;
+    var dLat = (lat2 - lat1) * rad, dLon = (lon2 - lon1) * rad;
+    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * rad) * Math.cos(lat2 * rad) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  var BADGE_DEFS = {
+    'superfan':      { icon: '⭐', label: 'Superfan',          desc: 'Seen 10+ times' },
+    'superfan-gold': { icon: '🌟', label: 'Legend',            desc: 'Seen 20+ times' },
+    'road-trip':     { icon: '🚗', label: 'Road Trip',         desc: '250+ miles from home' },
+    'gone-distance': { icon: '✈️', label: 'Gone the Distance', desc: '500+ miles from home' },
+    'passport':      { icon: '🌎', label: 'Passport Stamped',  desc: 'Show outside the US' },
+    'final-bow':     { icon: '🕯️', label: 'Final Bow',         desc: 'Artist no longer performs' },
+    'opener-effect': { icon: '🚀', label: 'Opener Effect',     desc: 'Spotted them before they made it big' },
+  };
+
+  var US_STATES = 'AL AK AZ AR CA CO CT DE FL GA HI ID IL IN IA KS KY LA ME MD MA MI MN MS MO MT NE NV NH NJ NM NY NC ND OH OK OR PA RI SC SD TN TX UT VT VA WA WV WI WY DC'.split(' ');
+  var RETIRED = (window.CONCERT_CONFIG && window.CONCERT_CONFIG.retiredArtists) || {};
+
   var ARTIST_PHOTOS = {};
   (function () {
     var src = (window.CONCERT_CONFIG && window.CONCERT_CONFIG.artistPhotos) || {};
@@ -159,6 +208,34 @@
   }
   var ARTISTS = countList(bandIndex);
   var VENUES  = countList(venueIndex);
+
+  // ---- compute per-show badges -------------------------------------------
+  var headlinerFirstDate = {};
+  DATED.forEach(function (s) {
+    var hg = groupOf(s.headliner);
+    if (!headlinerFirstDate[hg] || s.date < headlinerFirstDate[hg]) headlinerFirstDate[hg] = s.date;
+  });
+
+  SHOWS.forEach(function (s) {
+    s.badges = [];
+    var coords = CITY_COORDS[(s.city || '') + '|' + (s.state || '')];
+    s.distMiles = coords ? Math.round(haversineMiles(HOME_COORDS[0], HOME_COORDS[1], coords[0], coords[1])) : null;
+    if (s.distMiles >= 500)      s.badges.push('gone-distance');
+    else if (s.distMiles >= 250) s.badges.push('road-trip');
+    if (s.state && US_STATES.indexOf(s.state) === -1) s.badges.push('passport');
+    if (RETIRED[groupOf(s.headliner)]) s.badges.push('final-bow');
+    if (s.date) {
+      var hasOpener = s.bands.some(function (b) {
+        if (groupOf(b) === groupOf(s.headliner)) return false;
+        var bg = groupOf(b);
+        return headlinerFirstDate[bg] && headlinerFirstDate[bg] > s.date;
+      });
+      if (hasOpener) s.badges.push('opener-effect');
+    }
+  });
+
+  var superfanGroups = {};
+  Object.keys(bandIndex).forEach(function (g) { superfanGroups[g] = bandIndex[g].length; });
 
   // years
   var yearCounts = {};
@@ -232,6 +309,19 @@
            'rel="noopener noreferrer" title="Search for this setlist on setlist.fm">' +
            'setlist.fm <span class="ext">&#8599;</span></a>';
   }
+  function showBadgeHtml(s) {
+    if (!s.badges || !s.badges.length) return '';
+    return '<div class="show-badges">' +
+      s.badges.map(function (id) {
+        var def = BADGE_DEFS[id] || {};
+        var title = def.label || id;
+        if ((id === 'road-trip' || id === 'gone-distance') && s.distMiles) title += ' (' + s.distMiles + ' mi)';
+        if (id === 'final-bow' && RETIRED[groupOf(s.headliner)]) title += ' — ' + RETIRED[groupOf(s.headliner)];
+        return '<span class="show-badge" data-badge="' + id + '" title="' + esc(title) + '" role="button" tabindex="0">' + (def.icon || '?') + '</span>';
+      }).join('') +
+    '</div>';
+  }
+
   function ticketCard(s, opts) {
     opts = opts || {};
     var stub;
@@ -257,7 +347,7 @@
     }
     return '<div class="ticket">' +
              '<div class="stub">' + stub + '</div>' +
-             '<div class="body">' + badge +
+             '<div class="body">' + badge + showBadgeHtml(s) +
                '<div class="headliner">' + head + '</div>' +
                supportLine(s, hl) +
                tourLine(s) +
@@ -385,6 +475,7 @@
     app.innerHTML =
       '<div class="view-head">The Stats <span class="count-pill">since ' + firstYear + '</span></div>' +
       '<div class="tiles">' + tiles + '</div>' +
+      buildAchievements() +
       '<div class="cols2" style="margin-top:30px">' +
         '<div><div class="view-head">Most-seen bands</div><div class="rowlist">' + topA + '</div></div>' +
         '<div><div class="view-head">Most-visited venues</div><div class="rowlist">' + topV + '</div></div>' +
@@ -533,6 +624,8 @@
         '<div class="detail-head-text">' +
           '<button class="back" id="detail-back">&larr; back</button>' +
           '<h2>' + esc(name) + '</h2>' +
+          (kind === 'artist' && superfanGroups[name] >= 20 ? '<div class="superfan-badge">🌟 Legend</div>' : '') +
+          (kind === 'artist' && superfanGroups[name] >= 10 && superfanGroups[name] < 20 ? '<div class="superfan-badge">⭐ Superfan</div>' : '') +
           akaHtml +
           '<div class="stat-line">' + stat.map(function (x) { return "<span>" + x + "</span>"; }).join("") + '</div>' +
         '</div>' +
@@ -554,6 +647,106 @@
         showDetail(b.getAttribute("data-kind"), b.getAttribute("data-name"));
       });
     });
+    Array.prototype.forEach.call(document.querySelectorAll(".show-badge"), function (b) {
+      b.addEventListener("click", function (e) {
+        e.stopPropagation();
+        viewBadge(b.getAttribute("data-badge"));
+      });
+    });
+    Array.prototype.forEach.call(document.querySelectorAll(".achievement"), function (b) {
+      b.addEventListener("click", function () {
+        viewBadge(b.getAttribute("data-achievement"));
+      });
+    });
+  }
+
+  function buildAchievements() {
+    var defs = [
+      { id: 'superfan-gold', count: Object.keys(superfanGroups).filter(function (g) { return superfanGroups[g] >= 20; }).length, unit: 'artist' },
+      { id: 'superfan',      count: Object.keys(superfanGroups).filter(function (g) { return superfanGroups[g] >= 10; }).length, unit: 'artist' },
+      { id: 'opener-effect', count: SHOWS.filter(function (s) { return s.badges.indexOf('opener-effect') >= 0; }).length, unit: 'show' },
+      { id: 'gone-distance', count: SHOWS.filter(function (s) { return s.badges.indexOf('gone-distance') >= 0; }).length, unit: 'show' },
+      { id: 'road-trip',     count: SHOWS.filter(function (s) { return s.badges.indexOf('road-trip') >= 0; }).length, unit: 'show' },
+      { id: 'passport',      count: SHOWS.filter(function (s) { return s.badges.indexOf('passport') >= 0; }).length, unit: 'show' },
+      { id: 'final-bow',     count: SHOWS.filter(function (s) { return s.badges.indexOf('final-bow') >= 0; }).length, unit: 'show' },
+    ].filter(function (d) { return d.count > 0; });
+
+    if (!defs.length) return '';
+    return '<div class="view-head" style="margin-top:28px">Achievements</div>' +
+      '<div class="achievement-grid">' +
+      defs.map(function (d) {
+        var def = BADGE_DEFS[d.id];
+        return '<button class="achievement" data-achievement="' + d.id + '" title="' + esc(def.desc) + '">' +
+                 '<span class="ach-icon">' + def.icon + '</span>' +
+                 '<span class="ach-name">' + esc(def.label) + '</span>' +
+                 '<span class="ach-count">' + d.count + ' ' + d.unit + (d.count !== 1 ? 's' : '') + '</span>' +
+               '</button>';
+      }).join('') +
+      '</div>';
+  }
+
+  function viewBadge(id) {
+    var def = BADGE_DEFS[id];
+    if (!def) return;
+
+    if (id === 'superfan' || id === 'superfan-gold') {
+      var minCount = id === 'superfan-gold' ? 20 : 10;
+      var artists = Object.keys(superfanGroups)
+        .filter(function (g) { return superfanGroups[g] >= minCount; })
+        .sort(function (a, b) { return superfanGroups[b] - superfanGroups[a]; });
+      var maxC = artists.length ? superfanGroups[artists[0]] : 1;
+      var rows = artists.map(function (g, i) {
+        return rowItem(i + 1, g, superfanGroups[g], maxC, 'artist');
+      }).join('');
+      app.innerHTML =
+        '<div class="detail-head"><div class="detail-head-text">' +
+          '<button class="back" id="badge-back">&larr; back</button>' +
+          '<h2>' + def.icon + ' ' + def.label + '</h2>' +
+          '<div class="stat-line"><span>' + def.desc + '</span> &middot; <span>' +
+            artists.length + ' artist' + (artists.length !== 1 ? 's' : '') + '</span></div>' +
+        '</div></div>' +
+        '<div class="rowlist">' + rows + '</div>';
+      el('badge-back').addEventListener('click', function () { setView('overview'); });
+      wireRows();
+      return;
+    }
+
+    var list = SHOWS.filter(function (s) { return s.badges && s.badges.indexOf(id) >= 0; });
+    list = list.slice().sort(function (a, b) { return (a.date || '') < (b.date || '') ? 1 : -1; });
+
+    var extra = '';
+    if (id === 'final-bow') {
+      var retiredSeen = {};
+      list.forEach(function (s) {
+        var g = groupOf(s.headliner);
+        if (!retiredSeen[g]) retiredSeen[g] = { reason: RETIRED[g] || '', count: 0 };
+        retiredSeen[g].count++;
+      });
+      extra = '<div class="badge-artists">' +
+        Object.keys(retiredSeen).map(function (g) {
+          var r = retiredSeen[g];
+          return '<div class="badge-artist-row">' +
+                   '<strong>' + esc(g) + '</strong>' +
+                   (r.reason ? ' &mdash; ' + esc(r.reason) : '') + ' ' +
+                   '<span class="badge-count">(' + r.count + ' show' + (r.count !== 1 ? 's' : '') + ')</span>' +
+                 '</div>';
+        }).join('') +
+      '</div>';
+    } else if (id === 'opener-effect') {
+      extra = '<div class="badge-note">These shows had a supporting act who later headlined your concert list.</div>';
+    }
+
+    app.innerHTML =
+      '<div class="detail-head"><div class="detail-head-text">' +
+        '<button class="back" id="badge-back">&larr; back</button>' +
+        '<h2>' + def.icon + ' ' + def.label + '</h2>' +
+        '<div class="stat-line"><span>' + def.desc + '</span> &middot; <span>' +
+          list.length + ' show' + (list.length !== 1 ? 's' : '') + '</span></div>' +
+      '</div></div>' +
+      extra +
+      ticketsHtml(list, {});
+    el('badge-back').addEventListener('click', function () { setView('overview'); });
+    wireRows();
   }
 
   // ---- Timeline / charts -------------------------------------------------

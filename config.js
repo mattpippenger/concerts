@@ -110,6 +110,20 @@ window.CONCERT_CONFIG = {
     'Mars': { name: 'Axis Nightclub', aka: ['Mars'] }
   },
 
+  // retiredArtists: headliner group names that no longer perform (artist passed away or
+  // band disbanded). Used to award the "Final Bow" badge on matching shows.
+  //   key   = the artist group name (same as what appears in bandIndex after aliases resolve)
+  //   value = short reason shown on the badge detail page
+  retiredArtists: {
+    'Chris Cornell':                         'Chris Cornell passed away May 2017',
+    'Jimmy Buffett & The Coral Reefer Band': 'Jimmy Buffett passed away September 2023',
+    'Prince':                                'Prince passed away April 2016',
+    'Soundgarden':                           'Chris Cornell passed away May 2017',
+    'Tom Petty & The Heartbreakers':         'Tom Petty passed away October 2017',
+    'Van Halen':                             'Eddie Van Halen passed away October 2020',
+    'REM':                                   'Band disbanded September 2011',
+  },
+
   // setlistOverrides: force a specific show to a specific setlist.fm page. Use this
   // when the auto-resolver guesses wrong (e.g. festival days like Summerfest where an
   // artist has several setlists on the same date). It always wins over the API result.
