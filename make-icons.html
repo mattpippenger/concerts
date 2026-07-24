@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Concert Tracker — Generate Icons</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #20283f; color: #f3e7cc; }
+    h1 { font-size: 1.4rem; margin-bottom: 0.5rem; }
+    p  { margin: 0.4rem 0; }
+    canvas { display: none; }
+    .status { margin-top: 1.5rem; padding: 1rem; background: rgba(255,255,255,0.1); border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <h1>Concert Tracker — Icon Generator</h1>
+  <p>Generating <code>icon-192.png</code> and <code>icon-512.png</code>…</p>
+  <div class="status" id="status">Working…</div>
+  <canvas id="c512" width="512" height="512"></canvas>
+  <canvas id="c192" width="192" height="192"></canvas>
+
+  <script>
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.arcTo(x + w, y, x + w, y + r, r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.arcTo(x + w, y + h, x + w - r, y + h, r);
+      ctx.lineTo(x + r, y + h);
+      ctx.arcTo(x, y + h, x, y + h - r, r);
+      ctx.lineTo(x, y + r);
+      ctx.arcTo(x, y, x + r, y, r);
+      ctx.closePath();
+    }
+
+    function drawIcon(canvas) {
+      const s = canvas.width;
+      const ctx = canvas.getContext('2d');
+
+      // Navy background
+      ctx.fillStyle = '#20283f';
+      roundRect(ctx, 0, 0, s, s, s * 0.156);
+      ctx.fill();
+
+      // Ticket body (cream)
+      const tx = s * 0.094, ty = s * 0.297, tw = s * 0.594, th = s * 0.406;
+      ctx.fillStyle = '#f3e7cc';
+      roundRect(ctx, tx, ty, tw, th, s * 0.027);
+      ctx.fill();
+
+      // Stub (darker cream)
+      const sx = s * 0.688, sy = ty, sw2 = s * 0.219, sh = th;
+      ctx.fillStyle = '#efe0bf';
+      roundRect(ctx, sx, sy, sw2, sh, s * 0.027);
+      ctx.fill();
+
+      // Perf notch circles
+      ctx.fillStyle = '#20283f';
+      ctx.beginPath(); ctx.arc(sx, ty, s * 0.039, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(sx, ty + th, s * 0.039, 0, Math.PI * 2); ctx.fill();
+
+      // Perf dashes
+      ctx.strokeStyle = '#20283f';
+      ctx.lineWidth = s * 0.008;
+      ctx.setLineDash([s * 0.031, s * 0.023]);
+      ctx.beginPath();
+      ctx.moveTo(sx, ty + s * 0.039);
+      ctx.lineTo(sx, ty + th - s * 0.039);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Gold accent stripe
+      ctx.fillStyle = '#c98a23';
+      ctx.beginPath();
+      roundRect(ctx, tx + s * 0.039, ty + th * 0.25, tw - s * 0.078, s * 0.014, s * 0.007);
+      ctx.fill();
+
+      // CT text
+      ctx.fillStyle = '#20283f';
+      ctx.font = `900 ${s * 0.273}px Arial, Helvetica, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillText('CT', tx + tw / 2, ty + th * 0.775);
+
+      // ADMIT ONE rotated text on stub
+      ctx.save();
+      ctx.translate(sx + sw2 / 2, ty + th / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillStyle = '#20283f';
+      ctx.font = `${s * 0.043}px Courier New, Courier, monospace`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ADMIT ONE', 0, 0);
+      ctx.restore();
+    }
+
+    function download(canvas, filename, cb) {
+      canvas.toBlob(blob => {
+        const a = document.createElement('a');
+        a.download = filename;
+        a.href = URL.createObjectURL(blob);
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+        if (cb) cb();
+      }, 'image/png');
+    }
+
+    const c512 = document.getElementById('c512');
+    const c192 = document.getElementById('c192');
+    drawIcon(c512);
+    drawIcon(c192);
+
+    // Stagger downloads so browser doesn't block both
+    download(c512, 'icon-512.png', () => {
+      setTimeout(() => {
+        download(c192, 'icon-192.png', () => {
+          document.getElementById('status').innerHTML =
+            '✓ Done! Move <strong>icon-192.png</strong> and <strong>icon-512.png</strong> ' +
+            'from your Downloads folder into the Concert App folder, then push to GitHub.';
+        });
+      }, 400);
+    });
+  </script>
+</body>
+</html>

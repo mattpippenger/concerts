@@ -22,7 +22,10 @@ window.CONCERT_CONFIG = {
     'Sammy Hagar & The Circle': 'Sammy Hagar',
     'Sammy Hagar and the Circle': 'Sammy Hagar',
 
-    'Jimmy Buffett': 'Jimmy Buffett & The Coral Reefer Band'
+    'Jimmy Buffett': 'Jimmy Buffett & The Coral Reefer Band',
+
+    // "Doobie Brothers" (2022 headliner) and "The Doobie Brothers" (2001 supporting) are the same band.
+    'Doobie Brothers': 'The Doobie Brothers',
   },
 
   // venueNames: clean display names for venues whose spreadsheet text carries extra

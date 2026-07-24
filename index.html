@@ -4,6 +4,15 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Concert Tracker</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#20283f" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Concerts" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -36,7 +45,7 @@
 
   <footer class="footer">
     <div class="theme-picker" id="theme-picker"><span class="tp-label">Theme</span></div>
-    <span class="footer-hint"><span id="footer-meta"></span> &middot; Double-click <code>Refresh &amp; Open.bat</code> to refresh from your spreadsheet.</span>
+    <span class="footer-hint"><span id="footer-meta"></span></span>
   </footer>
 
   <!-- data + config load before the app logic -->
@@ -44,5 +53,11 @@
   <script src="data.js"></script>
   <script src="tour-data.js"></script>
   <script src="app.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    }
+  </script>
 </body>
 </html>

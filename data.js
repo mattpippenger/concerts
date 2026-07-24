@@ -4333,10 +4333,24 @@ window.CONCERT_DATA = [
         "city":  "Indianapolis",
         "state":  "IN",
         "setlistUrl":  "https://www.setlist.fm/setlist/dave-matthews-band/2026/ruoff-music-center-noblesville-in-5b4a63d4.html"
+    },
+    {
+        "headliner":  "The Black Crowes",
+        "bands":  [
+                      "The Black Crowes",
+                      "Whiskey Myers",
+                      "Southall"
+                  ],
+        "date":  "2026-07-17",
+        "year":  2026,
+        "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
+        "city":  "Indianapolis",
+        "state":  "IN",
+        "setlistUrl":  "https://www.setlist.fm/setlist/the-black-crowes/2026/ruoff-music-center-noblesville-in-6b4a56b2.html"
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-06-29 10:01",
+    "generatedAt":  "2026-07-24 09:48",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  338
+    "showCount":  339
 };

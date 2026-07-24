@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Navy background -->
+  <rect width="512" height="512" rx="80" fill="#20283f"/>
+  <!-- Ticket body (kraft cream) -->
+  <rect x="48" y="152" width="304" height="208" rx="14" fill="#f3e7cc"/>
+  <!-- Stub section (slightly darker) -->
+  <rect x="352" y="152" width="112" height="208" rx="14" fill="#efe0bf"/>
+  <!-- Perforation notch circles (navy punches through ticket) -->
+  <circle cx="352" cy="152" r="20" fill="#20283f"/>
+  <circle cx="352" cy="360" r="20" fill="#20283f"/>
+  <!-- Perforation dashed line -->
+  <line x1="352" y1="172" x2="352" y2="340" stroke="#20283f" stroke-width="4" stroke-dasharray="16,12"/>
+  <!-- Gold accent stripe -->
+  <rect x="68" y="193" width="264" height="7" rx="3.5" fill="#c98a23"/>
+  <!-- CT logotype -->
+  <text x="200" y="302"
+    font-family="Arial, Helvetica, sans-serif"
+    font-weight="900"
+    font-size="140"
+    fill="#20283f"
+    text-anchor="middle">CT</text>
+  <!-- ADMIT ONE on stub, rotated -->
+  <g transform="translate(408,256) rotate(-90)">
+    <text
+      font-family="Courier New, Courier, monospace"
+      font-size="22"
+      fill="#20283f"
+      text-anchor="middle"
+      dominant-baseline="middle">ADMIT ONE</text>
+  </g>
+</svg>

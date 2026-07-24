@@ -64,26 +64,35 @@ function Clean-Text {
   return $v
 }
 
-# Load the setlist URL cache as a hashtable (key -> url-or-empty-string).
+# Load the setlist cache as a hashtable (key -> {url, tourName}).
+# Old-format entries (plain strings) are read as {url=str, tourName=''}.
 function Load-Cache {
   param([string]$Path)
   $h = @{}
   if (Test-Path $Path) {
     try {
       $obj = Get-Content $Path -Raw | ConvertFrom-Json
-      foreach ($p in $obj.PSObject.Properties) { $h[$p.Name] = [string]$p.Value }
+      foreach ($p in $obj.PSObject.Properties) {
+        $v = $p.Value
+        if ($v -is [string]) {
+          $h[$p.Name] = @{ url = $v; tourName = '' }
+        } else {
+          $h[$p.Name] = @{ url = [string]$v.url; tourName = [string]$v.tourName }
+        }
+      }
     } catch { Write-Host "  (couldn't read setlist cache; starting fresh)" -ForegroundColor Yellow }
   }
   return $h
 }
 
-# Query setlist.fm; return a direct URL only when the search finds exactly one
-# setlist, "" otherwise. Network/key errors return $null (caller treats as unresolved).
-function Resolve-SetlistUrl {
+# Query setlist.fm; return @{url; tourName} when exactly one setlist is found,
+# @{url=''; tourName=''} for no/ambiguous match, or $null on transient errors.
+function Resolve-Setlist {
   param([string]$Artist, [string]$DateIso, [string]$ApiKey)
-  if ([string]::IsNullOrEmpty($Artist) -or [string]::IsNullOrEmpty($DateIso)) { return '' }
+  $empty = @{ url = ''; tourName = '' }
+  if ([string]::IsNullOrEmpty($Artist) -or [string]::IsNullOrEmpty($DateIso)) { return $empty }
   $apiDate = ''
-  try { $apiDate = ([datetime]$DateIso).ToString('dd-MM-yyyy') } catch { return '' }
+  try { $apiDate = ([datetime]$DateIso).ToString('dd-MM-yyyy') } catch { return $empty }
   $uri = "https://api.setlist.fm/rest/1.0/search/setlists?artistName=" +
          [System.Uri]::EscapeDataString($Artist) + "&date=$apiDate"
   $headers = @{ 'x-api-key' = $ApiKey; 'Accept' = 'application/json' }
@@ -92,14 +101,18 @@ function Resolve-SetlistUrl {
     if ($null -ne $resp -and $resp.total -eq 1) {
       $first = $resp.setlist
       if ($first -is [array]) { $first = $first[0] }
-      if ($first -and $first.url) { return [string]$first.url }
+      if ($first -and $first.url) {
+        $tourName = ''
+        if ($first.tour -and $first.tour.name) { $tourName = [string]$first.tour.name }
+        return @{ url = [string]$first.url; tourName = $tourName }
+      }
     }
-    return ''   # zero or multiple matches -> use search fallback
+    return $empty   # zero or multiple matches -> use search fallback
   } catch {
     $code = $null
     try { $code = [int]$_.Exception.Response.StatusCode } catch {}
-    if ($code -eq 404) { return '' }      # API returns 404 for "no setlists found"
-    return $null                          # other errors: leave unresolved (retry next time)
+    if ($code -eq 404) { return $empty }   # API returns 404 for "no setlists found"
+    return $null                           # other errors: leave unresolved (retry next time)
   }
 }
 
@@ -219,6 +232,7 @@ try {
       venue      = $venue
       city       = $city
       state      = $state
+      tourName   = ''   # filled from setlist.fm API when available
       setlistUrl = ''   # filled below when a direct setlist.fm link is found
     })
     $rowCount++
@@ -240,13 +254,16 @@ try {
       if ([string]::IsNullOrEmpty($s.date)) { continue }   # need a date to match precisely
       $key = "$($s.headliner)|$($s.date)|$($s.venue)"
       if ($cache.ContainsKey($key)) {
-        $s.setlistUrl = $cache[$key]
+        $cached = $cache[$key]
+        $s.setlistUrl = $cached.url
+        $s.tourName   = $cached.tourName
       } else {
-        $url = Resolve-SetlistUrl -Artist $s.headliner -DateIso $s.date -ApiKey $SetlistApiKey
-        if ($null -eq $url) { $errors++ }      # transient error: don't cache, retry next run
+        $result = Resolve-Setlist -Artist $s.headliner -DateIso $s.date -ApiKey $SetlistApiKey
+        if ($null -eq $result) { $errors++ }   # transient error: don't cache, retry next run
         else {
-          $cache[$key] = $url
-          $s.setlistUrl = $url
+          $cache[$key]  = $result
+          $s.setlistUrl = $result.url
+          $s.tourName   = $result.tourName
           Start-Sleep -Milliseconds 600        # stay under setlist.fm's ~2 req/sec limit
         }
         $queries++

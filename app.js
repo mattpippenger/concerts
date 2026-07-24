@@ -108,7 +108,7 @@
 
   var TOURS = window.TOUR_DATA || {};
   function tourOf(s) {
-    return TOURS[s.headliner + '|' + (s.date || '') + '|' + s.venueRaw] || null;
+    return s.tourName || TOURS[s.headliner + '|' + (s.date || '') + '|' + s.venueRaw] || null;
   }
 
   var ARTIST_PHOTOS = {};
@@ -786,7 +786,8 @@
     var metaTxt = (META.showCount != null ? META.showCount + " shows" : SHOWS.length + " shows");
     if (META.generatedAt) metaTxt += " &middot; updated " + esc(META.generatedAt);
     el("masthead-meta").innerHTML = metaTxt;
-    el("footer-meta").innerHTML = "Source: " + esc(META.source || "Concerts.xlsm");
+    var srcFile = (META.source || 'Concerts.xlsm').replace(/.*[\\/]/, '');
+    el("footer-meta").innerHTML = "Source: " + esc(srcFile);
 
     Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
       t.addEventListener("click", function () { setView(t.getAttribute("data-view")); });

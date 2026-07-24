@@ -176,6 +176,7 @@ window.TOUR_DATA = {
   'The Black Crowes|2006-08-05|Lawn at White River': '2006 Summer Tour',
   'The Black Crowes|2010-08-25|Old National Centre (The Murat)': 'Say Goodnight to the Bad Guys',
   'The Black Crowes|2021-08-01|Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)': 'The Black Crowes Present: Shake Your Money Maker',
+  'The Black Crowes|2026-07-17|Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)': 'Southern Hospitality Tour',
   'The Cure|2023-06-25|Merriweather Post Pavillion': 'Shows of a Lost World',
   'The Eagles|1995-04-27|Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)': 'Hell Freezes Over',
   'The Eagles|2018-03-12|Bankers Life Fieldhouse (Conseco)': 'North American Tour 2018',
