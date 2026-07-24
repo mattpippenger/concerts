@@ -131,6 +131,8 @@ window.CONCERT_CONFIG = {
   //   value = the full setlist.fm URL
   // Applied at display time -- just reload index.html, no rebuild needed.
   setlistOverrides: {
-    'Cracker|2013-06-29': 'https://www.setlist.fm/setlist/cracker/2013/henry-w-maier-festival-park-us-cellular-connection-stage-milwaukee-wi-4bd90bb2.html'
+    'Cracker|2013-06-29': 'https://www.setlist.fm/setlist/cracker/2013/henry-w-maier-festival-park-us-cellular-connection-stage-milwaukee-wi-4bd90bb2.html',
+    // setlist.fm only knows this show under "Sammy Hagar"; spreadsheet has "Sammy Hagar & The Waboritas"
+    'Sammy Hagar & The Waboritas|2012-10-09': 'https://www.setlist.fm/setlist/sammy-hagar/2012/cabo-wabo-san-lucas-mexico-73dd1639.html'
   }
 };
