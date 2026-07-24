@@ -782,8 +782,7 @@
         '<div class="chart-card"><h3>Top venues</h3>' + barChartHorizontal(topV, { alt: true }) + '</div>' +
       '</div>' +
       (TOP_SONGS.length
-        ? '<div class="chart-card"><h3>Most-heard songs live <span class="count-pill">' +
-            SHOWS_WITH_SONGS + ' show' + (SHOWS_WITH_SONGS !== 1 ? 's' : '') + ' with setlist data</span></h3>' +
+        ? '<div class="chart-card"><h3>Most Heard Songs Live (According to Setlist.fm)</h3>' +
             barChartHorizontal(TOP_SONGS.slice(0, 15).map(function (s) { return { label: s.name, value: s.count }; })) +
           '</div>'
         : '') +
