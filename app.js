@@ -80,7 +80,9 @@
       city: s.city || "",
       state: s.state || "",
       // manual override wins; else the build-time resolved link; else search fallback
-      setlistUrl: setlistOverrideFor(s.headliner, s.date) || s.setlistUrl || null
+      setlistUrl: setlistOverrideFor(s.headliner, s.date) || s.setlistUrl || null,
+      songs: s.songs || [],
+      tourName: s.tourName || ""
     };
   });
 
