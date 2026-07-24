@@ -731,9 +731,12 @@
     search: viewSearch
   };
   function setView(name) {
-    Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
+    Array.prototype.forEach.call(document.querySelectorAll(".tab, .mobile-nav-item"), function (t) {
       t.classList.toggle("is-active", t.getAttribute("data-view") === name);
     });
+    var mn = el("mobile-nav"); var nt = el("nav-toggle");
+    if (mn) mn.classList.remove("is-open");
+    if (nt) nt.innerHTML = "&#9776;";
     window.scrollTo(0, 0);
     (VIEWS[name] || viewOverview)();
   }
@@ -790,6 +793,35 @@
     el("footer-meta").innerHTML = "Source: " + esc(srcFile);
 
     Array.prototype.forEach.call(document.querySelectorAll(".tab"), function (t) {
+      t.addEventListener("click", function () { setView(t.getAttribute("data-view")); });
+    });
+
+    // hamburger menu (mobile)
+    var navToggle = el("nav-toggle");
+    var mobileNav = el("mobile-nav");
+    if (navToggle && mobileNav) {
+      function positionMobileNav() {
+        var hdr = document.querySelector(".masthead");
+        if (hdr) mobileNav.style.top = hdr.offsetHeight + "px";
+      }
+      positionMobileNav();
+      window.addEventListener("resize", positionMobileNav);
+
+      navToggle.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var open = mobileNav.classList.toggle("is-open");
+        navToggle.innerHTML = open ? "&#10005;" : "&#9776;";
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!mobileNav.contains(e.target) && !navToggle.contains(e.target)) {
+          mobileNav.classList.remove("is-open");
+          navToggle.innerHTML = "&#9776;";
+        }
+      });
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll(".mobile-nav-item"), function (t) {
       t.addEventListener("click", function () { setView(t.getAttribute("data-view")); });
     });
 
