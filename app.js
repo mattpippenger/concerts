@@ -241,9 +241,12 @@
 
   // ---- song frequency (from shows with setlist data) ---------------------
   var SONG_COUNTS = {};
+  var SKIP_SONG = /\bsolo\b|\bintro\b|\boutro\b/i;
   SHOWS.forEach(function (s) {
     (s.songs || []).forEach(function (song) {
-      SONG_COUNTS[song] = (SONG_COUNTS[song] || 0) + 1;
+      if (song && !SKIP_SONG.test(song)) {
+        SONG_COUNTS[song] = (SONG_COUNTS[song] || 0) + 1;
+      }
     });
   });
   var TOP_SONGS = Object.keys(SONG_COUNTS)
