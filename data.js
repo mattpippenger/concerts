@@ -104,7 +104,9 @@ window.CONCERT_DATA = [
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/bush/1996/assembly-hall-bloomington-in-1bdb69c8.html",
-        "songs":  "Alien"
+        "songs":  [
+                      "Alien"
+                  ]
     },
     {
         "headliner":  "Rusted Root",
@@ -119,7 +121,24 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/rusted-root/1996/indiana-university-bloomington-bloomington-in-bfe0da2.html",
         "songs":  [
-
+                      "Laugh as the Sun",
+                      "Heaven",
+                      "Primal Scream",
+                      "Dangle",
+                      "Virtual Reality",
+                      "Infinite Space",
+                      "Voodoo",
+                      "Sister Contine",
+                      "Beautiful People",
+                      "Cruel Sun",
+                      "Martyr",
+                      "Baby Will Raam",
+                      "Bullets in the Fire",
+                      "Scattered",
+                      "Drum Trip",
+                      "Ecstasy",
+                      "Faith I Do Believe",
+                      "Send Me on My Way"
                   ]
     },
     {
@@ -135,7 +154,23 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/the-smashing-pumpkins/1997/assembly-hall-bloomington-in-3d6795b.html",
         "songs":  [
-
+                      "The Aeroplane Flies High (Turns Left, Looks Right)",
+                      "Jellybelly",
+                      "Rhinoceros",
+                      "Tonight, Tonight",
+                      "Zero",
+                      "Fuck You (An Ode to No One)",
+                      "Porcelina of the Vast Oceans",
+                      "1979",
+                      "Thirty-Three",
+                      "Bullet With Butterfly Wings",
+                      "Muzzle",
+                      "Disarm",
+                      "Thru the Eyes of Ruby",
+                      "By Starlight",
+                      "Siva",
+                      "X.Y.U.",
+                      "Silverfuck"
                   ]
     },
     {
@@ -1345,7 +1380,34 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/crosby-stills-nash-and-young/2002/conseco-fieldhouse-indianapolis-in-4bc57bda.html",
         "songs":  [
-
+                      "Carry On",
+                      "Questions",
+                      "Goin\u0027 Home",
+                      "Military Madness",
+                      "Wooden Ships",
+                      "Feed the People",
+                      "You\u0027re My Girl",
+                      "Eight Miles High",
+                      "I Used to Be a King",
+                      "Southern Man",
+                      "Southern Cross",
+                      "Almost Cut My Hair",
+                      "Cinnamon Girl",
+                      "Helplessly Hoping",
+                      "Our House",
+                      "Old Man",
+                      "Carry Me",
+                      "Guinnevere",
+                      "Harvest Moon",
+                      "Ole Man Trouble",
+                      "Half Your Angels",
+                      "Suite: Judy Blue Eyes",
+                      "Let\u0027s Roll",
+                      "Long Time Gone",
+                      "Two Old Friends",
+                      "Woodstock",
+                      "Rockin\u0027 in the Free World",
+                      "Long May You Run"
                   ]
     },
     {
@@ -1362,7 +1424,24 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/pete-yorn/2002/heartland-south-bend-in-3bdcd0a4.html",
         "songs":  [
-
+                      "Black",
+                      "For Nancy (\u0027Cos It Already Is)",
+                      "Closet",
+                      "Sense",
+                      "Lose You",
+                      "Knew Enough to Know Nothing at All",
+                      "On Your Side",
+                      "Sleep Better",
+                      "June",
+                      "Atlantic City",
+                      "Simonize",
+                      "Strange Condition",
+                      "Life on a Chain",
+                      "China Girl",
+                      "EZ",
+                      "Just Another",
+                      "Panic",
+                      "Murray"
                   ]
     },
     {
@@ -1379,7 +1458,26 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/pete-yorn/2002/egyptian-room-at-the-murat-centre-indianapolis-in-2bd90406.html",
         "songs":  [
-
+                      "Life on a Chain",
+                      "Black",
+                      "Highway to Hell",
+                      "Closet",
+                      "Sense",
+                      "For Nancy (\u0027Cos It Already Is)",
+                      "Lose You",
+                      "Knew Enough to Know Nothing at All",
+                      "On Your Side",
+                      "Sleep Better",
+                      "Just Another",
+                      "Undercover",
+                      "Strange Condition",
+                      "Dancing in the Dark",
+                      "Simonize",
+                      "China Girl",
+                      "Every Rose Has Its Thorn",
+                      "A Girl Like You",
+                      "Panic",
+                      "Murray"
                   ]
     },
     {
@@ -1750,7 +1848,26 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/the-who/2002/verizon-wireless-music-center-noblesville-in-1bd77d34.html",
         "songs":  [
-
+                      "I Can\u0027t Explain",
+                      "Substitute",
+                      "Anyway, Anyhow, Anywhere",
+                      "Who Are You",
+                      "Another Tricky Day",
+                      "Bargain",
+                      "Baba O\u0027Riley",
+                      "Sea and Sand",
+                      "5:15",
+                      "Love, Reign O\u0027er Me",
+                      "Eminence Front",
+                      "Behind Blue Eyes",
+                      "You Better You Bet",
+                      "The Kids Are Alright",
+                      "My Generation",
+                      "Won\u0027t Get Fooled Again",
+                      "Pinball Wizard",
+                      "Amazing Journey",
+                      "Sparks",
+                      "See Me, Feel Me"
                   ]
     },
     {
@@ -4582,7 +4699,24 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/tesla/2007/the-vogue-indianapolis-in-53de9f55.html",
         "songs":  [
-
+                      "Hang Tough",
+                      "Got No Glory",
+                      "Modern Day Cowboy",
+                      "Thank You",
+                      "Ball of Confusion (That\u0027s What the World Is Today)",
+                      "Heaven Nine Eleven",
+                      "Lazy Days, Crazy Nights",
+                      "Love Song",
+                      "What You Give",
+                      "Into the Now",
+                      "Cumin\u0027 Atcha Live",
+                      "Mighty Mouse",
+                      "Heaven\u0027s Trail (No Way Out)",
+                      "Government Personnel",
+                      "Freedom Slaves",
+                      "Rock Bottom",
+                      "Signs",
+                      "Edison\u0027s Medicine (Man Out of Time)"
                   ]
     },
     {
@@ -4646,7 +4780,25 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/dave-matthews-band/2007/verizon-wireless-music-center-noblesville-in-5bd6f3ec.html",
         "songs":  [
-
+                      "One Sweet World",
+                      "Crash Into Me",
+                      "Pantala Naga Pampa",
+                      "Rapunzel",
+                      "Where Are You Going",
+                      "Cornbread",
+                      "Jimi Thing",
+                      "Eh Hee",
+                      "Bartender",
+                      "Crush",
+                      "Idea of You",
+                      "#41",
+                      "What Would You Say",
+                      "The Song That Jane Likes",
+                      "Everyday",
+                      "Ants Marching",
+                      "So Damn Lucky",
+                      "American Baby Intro",
+                      "Two Step"
                   ]
     },
     {
@@ -4942,7 +5094,20 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/motley-crue/2008/nikon-at-jones-beach-theater-wantagh-ny-7bd3b278.html",
         "songs":  [
-
+                      "Kickstart My Heart",
+                      "Wild Side",
+                      "Shout at the Devil",
+                      "Saints of Los Angeles",
+                      "Live Wire",
+                      "Sick Love Song",
+                      "Mutherfucker of the Year",
+                      "Don\u0027t Go Away Mad (Just Go Away)",
+                      "Same Ol\u0027 Situation (S.O.S.)",
+                      "Primal Scream",
+                      "Looks That Kill",
+                      "Girls, Girls, Girls",
+                      "Dr. Feelgood",
+                      "Home Sweet Home"
                   ]
     },
     {
@@ -10084,15 +10249,41 @@ window.CONCERT_DATA = [
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
         "city":  "Indianapolis",
         "state":  "IN",
-        "tourName":  "",
-        "setlistUrl":  "",
+        "tourName":  "Bigger \u0026 Weirder 2026 Tour",
+        "setlistUrl":  "https://www.setlist.fm/setlist/weird-al-yankovic/2026/ruoff-music-center-noblesville-in-6b4f6a12.html",
         "songs":  [
-
+                      "Bigger and Weirder intro",
+                      "Tacky",
+                      "Mission Statement",
+                      "Polkamania!",
+                      "Everything You Know Is Wrong",
+                      "One More Minute",
+                      "Another One Rides the Bus",
+                      "Smells Like Nirvana",
+                      "Dare to Be Stupid",
+                      "Party in the CIA / It\u0027s All About the Pentiums / Bedrock Anthem / My Bologna / Ricky / Ode to a Superhero / I Love Rocky Road / Eat It / Like a Surgeon / Word Crimes / Canadian Idiot",
+                      "Crimes of Carelessness",
+                      "Fat",
+                      "Interlude",
+                      "Itâs My World (and Weâre All Living in It)",
+                      "Captain Underpants Theme Song",
+                      "Now You Know",
+                      "Happy Together",
+                      "Skipper Dan",
+                      "eBay",
+                      "Stop Forwarding That Crap to Me",
+                      "White \u0026 Nerdy",
+                      "Amish Paradise",
+                      "Toccata and Fugue in D minor, BWV 565",
+                      "We All Have Cell Phones",
+                      "The Saga Begins",
+                      "Charge",
+                      "Yoda"
                   ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-08-10 08:16",
+    "generatedAt":  "2026-08-10 08:17",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
     "showCount":  340
 };
