@@ -104,9 +104,7 @@ window.CONCERT_DATA = [
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/bush/1996/assembly-hall-bloomington-in-1bdb69c8.html",
-        "songs":  [
-
-                  ]
+        "songs":  "Alien"
     },
     {
         "headliner":  "Rusted Root",
@@ -1319,7 +1317,19 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/willie-nelson/2001/verizon-wireless-music-center-noblesville-in-7bdd56b8.html",
         "songs":  [
-
+                      "Whiskey River",
+                      "Stay a Little Longer",
+                      "Good Hearted Woman",
+                      "Funny How Time Slips Away",
+                      "Crazy",
+                      "Night Life",
+                      "If You\u0027ve Got the Money, I\u0027ve Got the Time",
+                      "Workin\u0027 Man Blues",
+                      "Mammas Don\u0027t Let Your Babies Grow Up to Be Cowboys",
+                      "Will the Circle Be Unbroken?",
+                      "Amazing Grace",
+                      "Uncloudy Day",
+                      "This Land Is Your Land"
                   ]
     },
     {
@@ -2415,7 +2425,24 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/sammy-hagar/2003/old-national-centre-murat-theatre-indianapolis-in-23d904ff.html",
         "songs":  [
-
+                      "There\u0027s Only One Way to Rock",
+                      "Shaka Doobie (The Limit)",
+                      "Three Lock Box",
+                      "Rainy Day Women #12 \u0026 35",
+                      "Top of the World",
+                      "Rock Candy",
+                      "Let Sally Drive",
+                      "Bad Motor Scooter",
+                      "Hallelujah",
+                      "Right Now",
+                      "Deeper Kinda Love",
+                      "Finish What Ya Started",
+                      "Little White Lie",
+                      "Dreams",
+                      "I Can\u0027t Drive 55",
+                      "Mas Tequila",
+                      "Why Can\u0027t This Be Love",
+                      "Heavy Metal"
                   ]
     },
     {
@@ -5016,7 +5043,24 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/acdc/2008/conseco-fieldhouse-indianapolis-in-43d6a3b3.html",
         "songs":  [
-
+                      "Rock \u0027n\u0027 Roll Train",
+                      "Hell Ain\u0027t a Bad Place to Be",
+                      "Back in Black",
+                      "Dirty Deeds Done Dirt Cheap",
+                      "Big Jack",
+                      "Thunderstruck",
+                      "Black Ice",
+                      "The Jack",
+                      "Hells Bells",
+                      "Shoot to Thrill",
+                      "War Machine",
+                      "Anything Goes",
+                      "You Shook Me All Night Long",
+                      "T.N.T.",
+                      "Whole Lotta Rosie",
+                      "Let There Be Rock",
+                      "Highway to Hell",
+                      "For Those About to Rock (We Salute You)"
                   ]
     },
     {
@@ -5276,7 +5320,33 @@ window.CONCERT_DATA = [
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/jimmy-buffett/2009/verizon-wireless-music-center-noblesville-in-63d81693.html",
         "songs":  [
-
+                      "Lage Nom Ai",
+                      "Stars on the Water",
+                      "SummerZcool",
+                      "It\u0027s Five O\u0027Clock Somewhere",
+                      "MaÃ±ana",
+                      "Conky Tonkin\u0027",
+                      "Changes in Latitudes, Changes in Attitudes",
+                      "Volcano",
+                      "Cheeseburger in Paradise",
+                      "Come Monday",
+                      "Son of a Son of a Sailor",
+                      "Brown Eyed Girl",
+                      "One Particular Harbour",
+                      "A Lot to Drink About",
+                      "My Head Hurts, My Feet Stink and I Don\u0027t Love Jesus",
+                      "Rocky Raccoon",
+                      "GrapefruitâJuicy Fruit",
+                      "Last Mango in Paris",
+                      "Surfing in a Hurricane",
+                      "Southern Cross",
+                      "Gypsies in the Palace",
+                      "A Pirate Looks at Forty",
+                      "Margaritaville",
+                      "Fins",
+                      "Scarlet Begonias",
+                      "Yellow Submarine",
+                      "Trying to Reason With Hurricane Season"
                   ]
     },
     {
@@ -10002,10 +10072,27 @@ window.CONCERT_DATA = [
                       "Remedy",
                       "Boomer\u0027s Story"
                   ]
+    },
+    {
+        "headliner":  "Weird Al Yankovic",
+        "bands":  [
+                      "Weird Al Yankovic",
+                      "Puddles Pity Party"
+                  ],
+        "date":  "2026-08-06",
+        "year":  2026,
+        "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
+        "city":  "Indianapolis",
+        "state":  "IN",
+        "tourName":  "",
+        "setlistUrl":  "",
+        "songs":  [
+
+                  ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-07-24 15:59",
+    "generatedAt":  "2026-08-10 08:16",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  339
+    "showCount":  340
 };
