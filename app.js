@@ -1054,7 +1054,7 @@
 
   function closeAddModal() {
     var overlay = el("add-modal-overlay");
-    if (!overlay) return;
+    if (!overlay || !overlay.classList.contains("is-open")) return;
     overlay.classList.remove("is-open");
     overlay.setAttribute("aria-hidden", "true");
     el("add-modal-body").innerHTML = "";
@@ -1198,6 +1198,15 @@
         wireArtistAutocomplete();
       });
 
+      // Regenerate #add-rest so Find Setlist gets a fresh element with no prior listeners
+      rest.innerHTML =
+        '<div class="add-field-group">' +
+          '<label>Date</label>' +
+          '<input class="add-autocomplete-input" id="add-date-input" type="date">' +
+        '</div>' +
+        '<button class="add-btn add-btn-primary" id="add-find-setlist-btn"' +
+          ' style="margin-bottom:18px" disabled>Find Setlist</button>' +
+        '<div id="add-setlist-result"></div>';
       rest.style.display = "block";
       wireDateAndSetlist();
     }
@@ -1517,7 +1526,8 @@
           callback(null, { json: JSON.parse(content), sha: resp.sha });
         } catch (e) { callback(e, null); }
       } else {
-        callback(new Error("GitHub GET failed: HTTP " + xhr.status + " " + xhr.responseText), null);
+        var hint = (xhr.status === 401 || xhr.status === 403) ? " — check your GitHub PAT in Settings." : "";
+        callback(new Error("GitHub GET failed: HTTP " + xhr.status + hint), null);
       }
     };
     xhr.send();
@@ -1534,7 +1544,8 @@
       if (xhr.status === 200 || xhr.status === 201) {
         callback(null);
       } else {
-        callback(new Error("GitHub PUT failed: HTTP " + xhr.status + " " + xhr.responseText));
+        var putHint = (xhr.status === 401 || xhr.status === 403) ? " — check your GitHub PAT in Settings." : (xhr.status === 409 ? " — concurrent edit conflict; try again." : "");
+        callback(new Error("GitHub PUT failed: HTTP " + xhr.status + putHint));
       }
     };
     var encoded = btoa(unescape(encodeURIComponent(content)));
@@ -1576,7 +1587,7 @@
 
     var saveRow = el("add-save-row");
     var prevStatus = saveRow && saveRow.nextSibling;
-    if (prevStatus && prevStatus.className && prevStatus.className.indexOf("add-save-status") !== -1) {
+    if (prevStatus && prevStatus.nodeType === 1 && prevStatus.className && prevStatus.className.indexOf("add-save-status") !== -1) {
       prevStatus.parentNode.removeChild(prevStatus);
     }
     var statusArea = document.createElement("div");
@@ -1595,6 +1606,12 @@
       }
 
       var arr = file.json;
+      if (!Array.isArray(arr)) {
+        if (modal) modal.classList.remove("add-saving");
+        statusArea.className = "add-save-status err";
+        statusArea.textContent = "concerts-additions.json is malformed — expected an array. Edit the file on GitHub to fix it.";
+        return;
+      }
       arr.push(showData);
       var newContent = JSON.stringify(arr, null, 2);
       var commitMsg  = "Add show: " + showData.headliner + " " + showData.date;
@@ -1702,6 +1719,41 @@
       if (!venueIndex[s.venue]) venueIndex[s.venue] = [];
       var already = venueIndex[s.venue].some(function (x) { return x.id === s.id; });
       if (!already) venueIndex[s.venue].push(s);
+    });
+
+    // rebuild snapshot aggregates used by views
+    ARTISTS = countList(bandIndex);
+    VENUES  = countList(venueIndex);
+    yearCounts = {};
+    SHOWS.forEach(function (s) { if (s.year) yearCounts[s.year] = (yearCounts[s.year] || 0) + 1; });
+    YEARS = Object.keys(yearCounts).map(Number).sort(function (a, b) { return a - b; });
+    superfanGroups = {};
+    Object.keys(bandIndex).forEach(function (g) { superfanGroups[g] = bandIndex[g].length; });
+    SONG_COUNTS = {};
+    SHOWS.forEach(function (s) {
+      (s.songs || []).forEach(function (song) {
+        if (song && !SKIP_SONG.test(song)) SONG_COUNTS[song] = (SONG_COUNTS[song] || 0) + 1;
+      });
+    });
+    TOP_SONGS = Object.keys(SONG_COUNTS)
+      .map(function (s) { return { name: s, count: SONG_COUNTS[s] }; })
+      .sort(function (a, b) { return b.count - a.count || a.name.localeCompare(b.name); });
+    SHOWS_WITH_SONGS = SHOWS.filter(function (s) { return s.songs && s.songs.length; }).length;
+
+    // rebuild headlinerFirstDate and opener-effect badges for added shows
+    headlinerFirstDate = {};
+    DATED.forEach(function (s) {
+      var hg = groupOf(s.headliner);
+      if (!headlinerFirstDate[hg] || s.date < headlinerFirstDate[hg]) headlinerFirstDate[hg] = s.date;
+    });
+    SHOWS.forEach(function (s) {
+      if (!s.fromAdditions || !s.date) return;
+      var hasOpener = s.bands.some(function (b) {
+        if (groupOf(b) === groupOf(s.headliner)) return false;
+        var bg = groupOf(b);
+        return headlinerFirstDate[bg] && headlinerFirstDate[bg] > s.date;
+      });
+      if (hasOpener && s.badges.indexOf("opener-effect") === -1) s.badges.push("opener-effect");
     });
   }
 
