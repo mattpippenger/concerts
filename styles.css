@@ -1047,3 +1047,9 @@ button.fact-link:hover { border-top-color: var(--red); transform: translateY(-2p
 .add-opener-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .add-opener-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 10px; background: var(--surface-raised, #eee); border-radius: 20px; font-size: 0.82rem; }
 .add-opener-chip button { background: none; border: none; cursor: pointer; color: var(--ink-muted, #888); font-size: 0.9rem; padding: 0; line-height: 1; }
+
+/* Save state */
+.add-saving { opacity: 0.6; pointer-events: none; }
+.add-save-status { font-size: 0.85rem; margin-top: 10px; padding: 8px 12px; border-radius: 6px; }
+.add-save-status.ok  { background: #e6f7ee; color: #1a7a3c; }
+.add-save-status.err { background: #fde8e8; color: #b91c1c; }

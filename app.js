@@ -1503,6 +1503,126 @@
     }
   }
 
+  function githubGetFile(path, pat, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + path, true);
+    xhr.setRequestHeader("Authorization", "Bearer " + pat);
+    xhr.setRequestHeader("Accept", "application/vnd.github+json");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status === 200) {
+        try {
+          var resp = JSON.parse(xhr.responseText);
+          var content = atob(resp.content.replace(/\n/g, ""));
+          callback(null, { json: JSON.parse(content), sha: resp.sha });
+        } catch (e) { callback(e, null); }
+      } else {
+        callback(new Error("GitHub GET failed: HTTP " + xhr.status + " " + xhr.responseText), null);
+      }
+    };
+    xhr.send();
+  }
+
+  function githubPutFile(path, pat, content, sha, message, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("PUT", "https://api.github.com/repos/" + GITHUB_REPO + "/contents/" + path, true);
+    xhr.setRequestHeader("Authorization", "Bearer " + pat);
+    xhr.setRequestHeader("Accept", "application/vnd.github+json");
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status === 200 || xhr.status === 201) {
+        callback(null);
+      } else {
+        callback(new Error("GitHub PUT failed: HTTP " + xhr.status + " " + xhr.responseText));
+      }
+    };
+    var encoded = btoa(unescape(encodeURIComponent(content)));
+    xhr.send(JSON.stringify({ message: message, content: encoded, sha: sha }));
+  }
+
+  function buildShowFromState() {
+    var confirmedActs = ADD_STATE.confirmedActs || [];
+    var manualOpeners = ADD_STATE.manualOpeners || [];
+    // bands: openers first, headliner last (matching existing data.js convention)
+    var allBands = [];
+    confirmedActs.forEach(function (b) { if (allBands.indexOf(b) === -1) allBands.push(b); });
+    manualOpeners.forEach(function (b) { if (b && allBands.indexOf(b) === -1) allBands.push(b); });
+    if (allBands.indexOf(ADD_STATE.artistName) === -1) allBands.push(ADD_STATE.artistName);
+
+    return {
+      headliner:  ADD_STATE.artistName || "",
+      bands:      allBands,
+      date:       ADD_STATE.date || "",
+      venue:      (el("add-venue")       ? el("add-venue").value.trim()       : ADD_STATE.venueName   || ""),
+      city:       (el("add-city")        ? el("add-city").value.trim()        : ADD_STATE.venueCity   || ""),
+      state:      (el("add-state")       ? el("add-state").value.trim()       : ADD_STATE.venueState  || ""),
+      tourName:   (el("add-tour")        ? el("add-tour").value.trim()        : ADD_STATE.tourName    || ""),
+      setlistUrl: (el("add-setlist-url") ? el("add-setlist-url").value.trim() : ADD_STATE.setlistUrl  || null) || null,
+      songs:      ADD_STATE.songs || []
+    };
+  }
+
+  function handleSaveShow() {
+    var showData = buildShowFromState();
+
+    if (!showData.headliner || !showData.date) {
+      alert("Artist and date are required.");
+      return;
+    }
+
+    var modal = el("add-modal");
+    if (modal) modal.classList.add("add-saving");
+
+    var statusArea = document.createElement("div");
+    statusArea.className = "add-save-status";
+    statusArea.textContent = "Saving to GitHub…";
+    var saveRow = el("add-save-row");
+    if (saveRow) saveRow.parentNode.insertBefore(statusArea, saveRow.nextSibling);
+
+    var creds = getCredentials();
+
+    githubGetFile(ADDITIONS_PATH, creds.githubPat, function (err, file) {
+      if (err) {
+        if (modal) modal.classList.remove("add-saving");
+        statusArea.className = "add-save-status err";
+        statusArea.textContent = "Could not read concerts-additions.json from GitHub: " + err.message;
+        return;
+      }
+
+      var arr = file.json;
+      arr.push(showData);
+      var newContent = JSON.stringify(arr, null, 2);
+      var commitMsg  = "Add show: " + showData.headliner + " " + showData.date;
+
+      githubPutFile(ADDITIONS_PATH, creds.githubPat, newContent, file.sha, commitMsg, function (putErr) {
+        if (modal) modal.classList.remove("add-saving");
+
+        if (putErr) {
+          statusArea.className = "add-save-status err";
+          statusArea.textContent = "Save failed: " + putErr.message;
+          return;
+        }
+
+        // optimistic: store in localStorage so show survives reload before Pages redeploys (~60s)
+        try {
+          var pending = JSON.parse(localStorage.getItem("concert_pending") || "[]");
+          pending.push(showData);
+          localStorage.setItem("concert_pending", JSON.stringify(pending));
+        } catch (e) {}
+
+        // merge immediately into the live session
+        mergeAdditions([showData]);
+
+        statusArea.className = "add-save-status ok";
+        statusArea.textContent = "✓ Saved! " + showData.headliner + " on " + showData.date + " added to your tracker.";
+
+        // close modal after 1.5s
+        setTimeout(function () { closeAddModal(); }, 1500);
+      });
+    });
+  }
+
   // -------------------------------------------------------- additions merge
   var CURRENT_VIEW = "overview";
 
@@ -1611,6 +1731,14 @@
           try { pending = JSON.parse(localStorage.getItem("concert_pending") || "[]"); } catch (e) {}
           // combine: committed additions + pending (dedup handles overlap)
           mergeAdditions(data.concat(pending));
+          // prune pending entries now present in the committed file
+          try {
+            var committed = data.map(function (s) { return s.headliner + "|" + s.date; });
+            var freshPending = pending.filter(function (p) {
+              return committed.indexOf(p.headliner + "|" + p.date) === -1;
+            });
+            localStorage.setItem("concert_pending", JSON.stringify(freshPending));
+          } catch (e) {}
         } catch (e) { /* malformed JSON — skip */ }
       }
     };
