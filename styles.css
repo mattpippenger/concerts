@@ -332,7 +332,6 @@ html, body {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: clamp(19px, 3vw, 25px);
-  text-transform: uppercase;
   letter-spacing: 0.02em;
   line-height: 1.05;
   color: var(--ink);
