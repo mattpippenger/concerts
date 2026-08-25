@@ -58,18 +58,6 @@
     <span class="footer-hint"><span id="footer-meta"></span></span>
   </footer>
 
-  <!-- data + config load before the app logic -->
-  <script src="config.js"></script>
-  <script src="data.js"></script>
-  <script src="tour-data.js"></script>
-  <script src="app.js"></script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js').catch(console.error);
-    }
-  </script>
-
   <!-- Add Show -->
   <button class="add-show-fab" id="add-show-fab" aria-label="Add a show">+</button>
 
@@ -81,5 +69,17 @@
       </div>
     </div>
   </div>
+
+  <!-- data + config load before the app logic -->
+  <script src="config.js"></script>
+  <script src="data.js"></script>
+  <script src="tour-data.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js').catch(console.error);
+    }
+  </script>
 </body>
 </html>
