@@ -1243,7 +1243,7 @@
     var dateInput   = el("add-date-input");
     var findBtn     = el("add-find-setlist-btn");
     var resultArea  = el("add-setlist-result");
-    if (!dateInput || !findBtn) return;
+    if (!dateInput || !findBtn || !resultArea) return;
 
     function updateFindBtn() {
       findBtn.disabled = !(dateInput.value && ADD_STATE.artistMbid);
@@ -1259,6 +1259,14 @@
       // convert to setlist.fm format: "DD-MM-YYYY"
       var parts2 = d.split("-");
       var sfDate = parts2[2] + "-" + parts2[1] + "-" + parts2[0];
+
+      ADD_STATE.songs      = [];
+      ADD_STATE.venueName  = "";
+      ADD_STATE.venueCity  = "";
+      ADD_STATE.venueState = "";
+      ADD_STATE.tourName   = "";
+      ADD_STATE.setlistUrl = "";
+      ADD_STATE.venueId    = null;
 
       findBtn.disabled = true;
       findBtn.textContent = "Searching…";
