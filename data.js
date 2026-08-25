@@ -10293,14 +10293,14 @@ window.CONCERT_DATA = [
         "city":  "Indianapolis",
         "state":  "IN",
         "tourName":  "",
-        "setlistUrl":  "",
+        "setlistUrl":  "https://www.setlist.fm/setlist/tedeschi-trucks-band/2026/ruoff-music-center-noblesville-in-3376f0a1.html",
         "songs":  [
 
                   ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-08-25 08:48",
+    "generatedAt":  "2026-08-25 08:56",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
     "showCount":  341
 };

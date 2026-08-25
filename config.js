@@ -135,6 +135,8 @@ window.CONCERT_CONFIG = {
     // setlist.fm only knows these shows under "Sammy Hagar"; spreadsheet has "Sammy Hagar & The Waboritas"
     'Sammy Hagar & The Waboritas|2012-10-09': 'https://www.setlist.fm/setlist/sammy-hagar/2012/cabo-wabo-san-lucas-mexico-73dd1639.html',
     'Sammy Hagar & The Waboritas|2014-05-23': 'https://www.setlist.fm/setlist/sammy-hagar/2014/indianapolis-motor-speedway-speedway-in-5bc09390.html',
-    'Sammy Hagar & The Waboritas|2003-07-16': 'https://www.setlist.fm/setlist/sammy-hagar/2003/old-national-centre-murat-theatre-indianapolis-in-23d904ff.html'
+    'Sammy Hagar & The Waboritas|2003-07-16': 'https://www.setlist.fm/setlist/sammy-hagar/2003/old-national-centre-murat-theatre-indianapolis-in-23d904ff.html',
+    // setlist.fm uses "Tedeschi Trucks Band" (no &); spreadsheet has "Tedeschi & Trucks Band"
+    'Tedeschi & Trucks Band|2026-08-22': 'https://www.setlist.fm/setlist/tedeschi-trucks-band/2026/ruoff-music-center-noblesville-in-3376f0a1.html'
   }
 };
