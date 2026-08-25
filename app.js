@@ -1190,6 +1190,11 @@
         ADD_STATE.artistMbid = "";
         rest.style.display = "none";
         el("add-save-row").style.display = "none";
+        var wrap = el("add-ac-wrap");
+        wrap.innerHTML =
+          '<input class="add-autocomplete-input" id="add-artist-input" type="text"' +
+          ' placeholder="Start typing an artist name…" autocomplete="off" autocorrect="off" spellcheck="false">' +
+          '<div class="add-autocomplete-dropdown" id="add-ac-dropdown" style="display:none"></div>';
         wireArtistAutocomplete();
       });
 
