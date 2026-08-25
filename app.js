@@ -1381,6 +1381,128 @@
     }
   }
 
+  function fetchSupportingActs(sfDate, venueId) {
+    var section = el("add-supporting-acts-section");
+    if (!section) return;
+    section.innerHTML = '<div class="add-notice">Looking up other artists at this venue&hellip;</div>';
+
+    setlistFetch(
+      "search/setlists?date=" + sfDate + "&venueId=" + encodeURIComponent(venueId),
+      function (err, data) {
+        var otherArtists = [];
+        if (!err && data && data.setlist) {
+          data.setlist.forEach(function (sl) {
+            var name = sl.artist && sl.artist.name;
+            if (!name) return;
+            if (name.toLowerCase() === (ADD_STATE.artistName || "").toLowerCase()) return;
+            var dup = otherArtists.some(function (a) { return a.toLowerCase() === name.toLowerCase(); });
+            if (!dup) otherArtists.push(name);
+          });
+        }
+
+        if (!otherArtists.length) {
+          section.innerHTML = "";
+          renderManualOpenerField();
+          showSaveRow();
+          return;
+        }
+        renderActsConfirmation(otherArtists);
+      }
+    );
+  }
+
+  function renderActsConfirmation(otherArtists) {
+    var section = el("add-supporting-acts-section");
+    var checkboxes = otherArtists.map(function (name, i) {
+      return '<li><input type="checkbox" id="act-' + i + '" checked><label for="act-' + i + '">' + esc(name) + '</label></li>';
+    }).join("");
+
+    section.innerHTML =
+      '<div class="add-acts-confirm">' +
+        '<h4>&#127911; setlist.fm found these artists at the same show &mdash; does this look right?</h4>' +
+        '<ul class="add-acts-list">' + checkboxes + '</ul>' +
+        '<div class="add-btn-row">' +
+          '<button class="add-btn add-btn-primary" id="acts-yes-btn">Yes, add them</button>' +
+          '<button class="add-btn add-btn-secondary" id="acts-skip-btn">Skip</button>' +
+        '</div>' +
+      '</div>' +
+      '<div id="add-manual-opener-wrap"></div>';
+
+    el("acts-yes-btn").addEventListener("click", function () {
+      ADD_STATE.confirmedActs = [];
+      otherArtists.forEach(function (name, i) {
+        var cb = el("act-" + i);
+        if (cb && cb.checked) ADD_STATE.confirmedActs.push(name);
+      });
+      el("add-supporting-acts-section").querySelector(".add-acts-confirm").style.display = "none";
+      renderManualOpenerField();
+      showSaveRow();
+    });
+
+    el("acts-skip-btn").addEventListener("click", function () {
+      ADD_STATE.confirmedActs = [];
+      el("add-supporting-acts-section").querySelector(".add-acts-confirm").style.display = "none";
+      renderManualOpenerField();
+      showSaveRow();
+    });
+  }
+
+  function renderManualOpenerField() {
+    var wrap = el("add-manual-opener-wrap") || el("add-supporting-acts-section");
+    if (!wrap) return;
+    if (!ADD_STATE.manualOpeners) ADD_STATE.manualOpeners = [];
+
+    var chipsHtml = ADD_STATE.manualOpeners.map(function (name, i) {
+      return '<span class="add-opener-chip">' + esc(name) + '<button data-idx="' + i + '" aria-label="Remove">&times;</button></span>';
+    }).join("");
+
+    wrap.innerHTML = wrap.innerHTML.replace(/<div id="add-manual-field-block">[\s\S]*$/, "") +
+      '<div id="add-manual-field-block">' +
+        '<label class="add-auto-label" style="margin-bottom:6px">Add opener (not on setlist.fm)</label>' +
+        '<div class="add-manual-opener">' +
+          '<input id="add-opener-input" type="text" placeholder="Opener name…" autocomplete="off">' +
+          '<button id="add-opener-add-btn" type="button">Add</button>' +
+        '</div>' +
+        (chipsHtml ? '<div class="add-opener-chips" id="add-opener-chips">' + chipsHtml + '</div>' : '') +
+      '</div>';
+
+    function addOpener() {
+      var inp = el("add-opener-input");
+      var val = inp ? inp.value.trim() : "";
+      if (!val) return;
+      ADD_STATE.manualOpeners.push(val);
+      renderManualOpenerField();
+      showSaveRow();
+    }
+
+    el("add-opener-add-btn").addEventListener("click", addOpener);
+    el("add-opener-input").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); addOpener(); }
+    });
+
+    var chips = document.querySelectorAll(".add-opener-chip button");
+    Array.prototype.forEach.call(chips, function (btn) {
+      btn.addEventListener("click", function () {
+        var idx = parseInt(btn.getAttribute("data-idx"), 10);
+        ADD_STATE.manualOpeners.splice(idx, 1);
+        renderManualOpenerField();
+      });
+    });
+
+    showSaveRow();
+  }
+
+  function showSaveRow() {
+    var row = el("add-save-row");
+    if (row) row.style.display = "flex";
+
+    var saveBtn = el("add-save-btn");
+    if (saveBtn && !saveBtn._wired) {
+      saveBtn._wired = true;
+      saveBtn.addEventListener("click", handleSaveShow);
+    }
+  }
+
   // -------------------------------------------------------- additions merge
   var CURRENT_VIEW = "overview";
 
