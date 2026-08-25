@@ -969,6 +969,7 @@
     search: viewSearch
   };
   function setView(name) {
+    CURRENT_VIEW = name || "overview";
     Array.prototype.forEach.call(document.querySelectorAll(".tab, .mobile-nav-item"), function (t) {
       t.classList.toggle("is-active", t.getAttribute("data-view") === name);
     });
@@ -1013,6 +1014,120 @@
     var saved = "";
     try { saved = localStorage.getItem(THEME_STORE) || ""; } catch (e) {}
     applyTheme(saved);
+  }
+
+  // -------------------------------------------------------- additions merge
+  var CURRENT_VIEW = "overview";
+
+  function enrichShow(s, idOffset) {
+    var p = parts(s.date);
+    var pv = resolveVenue(s.venue);
+    return {
+      id: idOffset,
+      headliner: s.headliner || "",
+      bands: (s.bands && s.bands.length ? s.bands : [s.headliner]).filter(Boolean),
+      date: s.date || null,
+      year: s.year || (p ? p.y : null),
+      month: p ? p.m : null,
+      day: p ? p.d : null,
+      venue: pv.name,
+      venueAka: pv.aka,
+      venueRaw: s.venue || "",
+      city: s.city || "",
+      state: s.state || "",
+      setlistUrl: setlistOverrideFor(s.headliner, s.date) || s.setlistUrl || null,
+      songs: s.songs || [],
+      tourName: s.tourName || "",
+      badges: [],
+      distMiles: null,
+      fromAdditions: true
+    };
+  }
+
+  function recomputeDerived() {
+    // re-sort DATED
+    DATED.length = 0;
+    SHOWS.filter(function (s) { return s.date; })
+         .sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : a.id - b.id; })
+         .forEach(function (s, i) { DATED.push(s); s.ordinal = i + 1; });
+
+    // recompute badges for new shows only
+    SHOWS.forEach(function (s) {
+      if (!s.fromAdditions) return;
+      s.badges = [];
+      var coords = CITY_COORDS[(s.city || '') + '|' + (s.state || '')];
+      s.distMiles = coords ? Math.round(haversineMiles(HOME_COORDS[0], HOME_COORDS[1], coords[0], coords[1])) : null;
+      if (s.distMiles >= 500)      s.badges.push('gone-distance');
+      else if (s.distMiles >= 250) s.badges.push('road-trip');
+      if (s.state && US_STATES.indexOf(s.state) === -1) s.badges.push('passport');
+      if (RETIRED[groupOf(s.headliner)]) s.badges.push('final-bow');
+    });
+
+    // rebuild bandIndex entries for new shows
+    SHOWS.forEach(function (s) {
+      if (!s.fromAdditions) return;
+      var seen = {};
+      s.bands.forEach(function (b) {
+        if (!b) return;
+        var g = groupOf(b);
+        if (seen[g]) return;
+        seen[g] = 1;
+        if (!bandIndex[g]) bandIndex[g] = [];
+        // avoid duplicates if mergeAdditions called twice
+        var already = bandIndex[g].some(function (x) { return x.id === s.id; });
+        if (!already) bandIndex[g].push(s);
+      });
+    });
+    Object.keys(bandIndex).forEach(function (k) {
+      bandIndex[k].sort(function (a, b) {
+        var ad = a.date || "9999", bd = b.date || "9999";
+        return ad < bd ? -1 : ad > bd ? 1 : a.id - b.id;
+      });
+    });
+
+    // rebuild venueIndex entries for new shows
+    SHOWS.forEach(function (s) {
+      if (!s.fromAdditions || !s.venue) return;
+      if (!venueIndex[s.venue]) venueIndex[s.venue] = [];
+      var already = venueIndex[s.venue].some(function (x) { return x.id === s.id; });
+      if (!already) venueIndex[s.venue].push(s);
+    });
+  }
+
+  function mergeAdditions(rawArray) {
+    if (!rawArray || !rawArray.length) return;
+    rawArray.forEach(function (raw) {
+      // deduplicate by headliner+date
+      var dup = SHOWS.some(function (s) {
+        return s.headliner === (raw.headliner || "") && s.date === (raw.date || null);
+      });
+      if (dup) return;
+      var enriched = enrichShow(raw, SHOWS.length);
+      SHOWS.push(enriched);
+    });
+    recomputeDerived();
+    // re-render whichever view is currently showing
+    setView(CURRENT_VIEW);
+  }
+
+  function fetchAdditions() {
+    var url = "concerts-additions.json?_=" + Date.now();
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status === 200 || xhr.status === 0) {
+        try {
+          var data = JSON.parse(xhr.responseText);
+          // also merge any locally-pending shows not yet deployed
+          var pending = [];
+          try { pending = JSON.parse(localStorage.getItem("concert_pending") || "[]"); } catch (e) {}
+          // combine: committed additions + pending (dedup handles overlap)
+          mergeAdditions(data.concat(pending));
+        } catch (e) { /* malformed JSON — skip */ }
+      }
+    };
+    xhr.send();
   }
 
   // --------------------------------------------------------------- boot
@@ -1080,6 +1195,7 @@
     });
 
     setView("overview");
+    fetchAdditions();
   }
   boot();
 })();
