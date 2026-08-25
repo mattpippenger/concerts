@@ -1239,6 +1239,140 @@
     });
   }
 
+  function wireDateAndSetlist() {
+    var dateInput   = el("add-date-input");
+    var findBtn     = el("add-find-setlist-btn");
+    var resultArea  = el("add-setlist-result");
+    if (!dateInput || !findBtn) return;
+
+    function updateFindBtn() {
+      findBtn.disabled = !(dateInput.value && ADD_STATE.artistMbid);
+    }
+    dateInput.addEventListener("input", updateFindBtn);
+    updateFindBtn();
+
+    findBtn.addEventListener("click", function () {
+      var d = dateInput.value; // "YYYY-MM-DD"
+      if (!d || !ADD_STATE.artistMbid) return;
+      ADD_STATE.date = d;
+
+      // convert to setlist.fm format: "DD-MM-YYYY"
+      var parts2 = d.split("-");
+      var sfDate = parts2[2] + "-" + parts2[1] + "-" + parts2[0];
+
+      findBtn.disabled = true;
+      findBtn.textContent = "Searching…";
+      resultArea.innerHTML = "";
+
+      setlistFetch(
+        "search/setlists?artistMbid=" + encodeURIComponent(ADD_STATE.artistMbid) + "&date=" + sfDate,
+        function (err, data) {
+          findBtn.disabled = false;
+          findBtn.textContent = "Find Setlist";
+
+          if (err || !data || !data.setlist || !data.setlist.length) {
+            ADD_STATE.setlistFound = false;
+            resultArea.innerHTML = '<div class="add-notice add-notice-warn">No setlist found on setlist.fm for this date — fill in the details below.</div>';
+            renderSetlistFields(null);
+            renderManualOpenerField();
+            return;
+          }
+
+          var sl = data.setlist[0];
+          ADD_STATE.setlistFound = true;
+          ADD_STATE.venueId  = sl.venue && sl.venue.id;
+
+          // prefer the direct url from the response if available
+          if (sl.url) {
+            ADD_STATE.setlistUrl = sl.url;
+          } else {
+            ADD_STATE.setlistUrl = "https://www.setlist.fm/setlist/" +
+              encodeURIComponent((sl.artist && sl.artist.name || "").toLowerCase().replace(/\s+/g, "-")) + "/" +
+              sl.id + ".html";
+          }
+
+          // extract songs from sets
+          var songs = [];
+          if (sl.sets && sl.sets.set) {
+            sl.sets.set.forEach(function (set) {
+              (set.song || []).forEach(function (song) {
+                if (song.name) songs.push(song.name);
+              });
+            });
+          }
+          ADD_STATE.songs = songs;
+
+          var venue = sl.venue || {};
+          var city  = venue.city || {};
+          ADD_STATE.venueName  = venue.name || "";
+          ADD_STATE.venueCity  = city.name  || "";
+          ADD_STATE.venueState = city.stateCode || (city.country && city.country.code) || "";
+          ADD_STATE.tourName   = (sl.tour && sl.tour.name) || "";
+
+          resultArea.innerHTML = '<div class="add-notice">Found setlist on setlist.fm — fields pre-filled below.</div>';
+          renderSetlistFields(sl);
+
+          // kick off supporting acts lookup if we have a venueId
+          if (ADD_STATE.venueId) {
+            fetchSupportingActs(sfDate, ADD_STATE.venueId);
+          } else {
+            renderManualOpenerField();
+          }
+        }
+      );
+    });
+  }
+
+  function renderSetlistFields(sl) {
+    var resultArea = el("add-setlist-result");
+    var songs = ADD_STATE.songs || [];
+    var songsHtml = "";
+    if (songs.length) {
+      songsHtml =
+        '<div class="add-field-group">' +
+          '<button class="add-songs-toggle" id="add-songs-toggle" type="button">&#9654; ' + songs.length + ' songs from setlist.fm</button>' +
+          '<div id="add-songs-list" style="display:none" class="add-songs-list">' + songs.map(esc).join("<br>") + '</div>' +
+        '</div>';
+    }
+
+    resultArea.innerHTML +=
+      '<div class="add-two-col">' +
+        '<div class="add-field-group">' +
+          '<label class="add-auto-label">Venue</label>' +
+          '<input class="add-auto-field" id="add-venue" type="text" value="' + esc(ADD_STATE.venueName || "") + '">' +
+        '</div>' +
+        '<div class="add-field-group">' +
+          '<label class="add-auto-label">City</label>' +
+          '<input class="add-auto-field" id="add-city" type="text" value="' + esc(ADD_STATE.venueCity || "") + '">' +
+        '</div>' +
+      '</div>' +
+      '<div class="add-two-col">' +
+        '<div class="add-field-group">' +
+          '<label class="add-auto-label">State / Country Code</label>' +
+          '<input class="add-auto-field" id="add-state" type="text" value="' + esc(ADD_STATE.venueState || "") + '" maxlength="3">' +
+        '</div>' +
+        '<div class="add-field-group">' +
+          '<label class="add-auto-label">Tour Name</label>' +
+          '<input class="add-auto-field" id="add-tour" type="text" value="' + esc(ADD_STATE.tourName || "") + '">' +
+        '</div>' +
+      '</div>' +
+      '<div class="add-field-group">' +
+        '<label class="add-auto-label">setlist.fm URL</label>' +
+        '<input class="add-auto-field" id="add-setlist-url" type="url" value="' + esc(ADD_STATE.setlistUrl || "") + '">' +
+      '</div>' +
+      songsHtml +
+      '<div id="add-supporting-acts-section"></div>';
+
+    if (songs.length) {
+      el("add-songs-toggle").addEventListener("click", function () {
+        var list = el("add-songs-list");
+        var open = list.style.display === "none";
+        list.style.display = open ? "block" : "none";
+        el("add-songs-toggle").textContent = (open ? "▼ " : "► ") + songs.length + " songs from setlist.fm";
+      });
+    }
+  }
+
   // -------------------------------------------------------- additions merge
   var CURRENT_VIEW = "overview";
 
