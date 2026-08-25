@@ -10287,7 +10287,7 @@ window.CONCERT_DATA = [
                       "Tedeschi \u0026 Trucks Band",
                       "Alabama Shakes"
                   ],
-        "date":  "2026-08-25",
+        "date":  "2026-08-22",
         "year":  2026,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
         "city":  "Indianapolis",
@@ -10300,7 +10300,7 @@ window.CONCERT_DATA = [
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-08-25 08:38",
+    "generatedAt":  "2026-08-25 08:48",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
     "showCount":  341
 };
