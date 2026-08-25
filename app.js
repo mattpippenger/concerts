@@ -1060,6 +1060,26 @@
     el("add-modal-body").innerHTML = "";
   }
 
+  // -------------------------------------------------------- add show: state + API
+  var ADD_STATE = {};
+
+  function setlistFetch(path, callback) {
+    var creds = getCredentials();
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "https://api.setlist.fm/rest/1.0/" + path, true);
+    xhr.setRequestHeader("x-api-key", creds.setlistKey);
+    xhr.setRequestHeader("Accept", "application/json");
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState !== 4) return;
+      if (xhr.status === 200) {
+        try { callback(null, JSON.parse(xhr.responseText)); } catch (e) { callback(e, null); }
+      } else {
+        callback(new Error("HTTP " + xhr.status), null);
+      }
+    };
+    xhr.send();
+  }
+
   function renderSettingsScreen(onSave) {
     var body = el("add-modal-body");
     body.innerHTML =
@@ -1102,7 +1122,116 @@
 
   function renderAddForm() {
     var body = el("add-modal-body");
-    body.innerHTML = '<h2>Add Show</h2><p style="color:var(--ink-muted,#888)">Form coming in next task&hellip;</p>';
+    body.innerHTML =
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">' +
+        '<h2 style="margin:0">Add Show</h2>' +
+        '<button class="add-gear" id="add-open-settings">&#9881; Settings</button>' +
+      '</div>' +
+
+      '<div class="add-field-group" id="add-artist-group">' +
+        '<label>Headliner</label>' +
+        '<div class="add-autocomplete-wrap" id="add-ac-wrap">' +
+          '<input class="add-autocomplete-input" id="add-artist-input" type="text" placeholder="Start typing an artist name…" autocomplete="off" autocorrect="off" spellcheck="false">' +
+          '<div class="add-autocomplete-dropdown" id="add-ac-dropdown" style="display:none"></div>' +
+        '</div>' +
+      '</div>' +
+
+      '<div id="add-rest" style="display:none">' +
+        '<div class="add-field-group">' +
+          '<label>Date</label>' +
+          '<input class="add-autocomplete-input" id="add-date-input" type="date">' +
+        '</div>' +
+        '<button class="add-btn add-btn-primary" id="add-find-setlist-btn" style="margin-bottom:18px" disabled>Find Setlist</button>' +
+        '<div id="add-setlist-result"></div>' +
+      '</div>' +
+
+      '<div class="add-btn-row" id="add-save-row" style="display:none">' +
+        '<button class="add-btn add-btn-primary" id="add-save-btn">Save Show</button>' +
+        '<button class="add-btn add-btn-secondary" id="add-cancel-btn">Cancel</button>' +
+      '</div>';
+
+    el("add-open-settings").addEventListener("click", function () {
+      renderSettingsScreen(function () { renderAddForm(); });
+    });
+
+    el("add-cancel-btn") && el("add-cancel-btn").addEventListener("click", closeAddModal);
+
+    wireArtistAutocomplete();
+  }
+
+  function wireArtistAutocomplete() {
+    ADD_STATE = {};
+    var input    = el("add-artist-input");
+    var dropdown = el("add-ac-dropdown");
+    var rest     = el("add-rest");
+    if (!input) return;
+
+    var debounceTimer = null;
+
+    function showDropdown(html) {
+      dropdown.innerHTML = html;
+      dropdown.style.display = html ? "block" : "none";
+    }
+
+    function selectArtist(name, mbid) {
+      ADD_STATE.artistName = name;
+      ADD_STATE.artistMbid = mbid;
+      showDropdown("");
+
+      // Replace input with selected-artist pill
+      var wrap = el("add-ac-wrap");
+      wrap.innerHTML =
+        '<div class="add-selected-artist">' +
+          '<span>' + esc(name) + '</span>' +
+          '<button id="add-change-artist" title="Change artist">&times;</button>' +
+        '</div>';
+      el("add-change-artist").addEventListener("click", function () {
+        ADD_STATE.artistName = "";
+        ADD_STATE.artistMbid = "";
+        rest.style.display = "none";
+        el("add-save-row").style.display = "none";
+        wireArtistAutocomplete();
+      });
+
+      rest.style.display = "block";
+      wireDateAndSetlist();
+    }
+
+    input.addEventListener("input", function () {
+      var q = input.value.trim();
+      clearTimeout(debounceTimer);
+      if (q.length < 2) { showDropdown(""); return; }
+      debounceTimer = setTimeout(function () {
+        showDropdown('<div class="add-autocomplete-loading">Searching…</div>');
+        setlistFetch(
+          "search/artists?artistName=" + encodeURIComponent(q) + "&sort=relevance&p=1",
+          function (err, data) {
+            if (err || !data || !data.artist) { showDropdown(""); return; }
+            var items = data.artist.slice(0, 8).map(function (a) {
+              var dis = a.disambiguation ? '<span class="ac-dis">(' + esc(a.disambiguation) + ')</span>' : "";
+              return '<div class="add-autocomplete-item" data-mbid="' + esc(a.mbid) + '" data-name="' + esc(a.name) + '">' + esc(a.name) + dis + '</div>';
+            }).join("");
+            showDropdown(items || '<div class="add-autocomplete-loading">No results</div>');
+            Array.prototype.forEach.call(
+              dropdown.querySelectorAll(".add-autocomplete-item"),
+              function (item) {
+                item.addEventListener("click", function () {
+                  selectArtist(item.getAttribute("data-name"), item.getAttribute("data-mbid"));
+                });
+              }
+            );
+          }
+        );
+      }, 300);
+    });
+
+    // close dropdown on outside click
+    document.addEventListener("click", function onOutside(e) {
+      if (!dropdown.contains(e.target) && e.target !== input) {
+        showDropdown("");
+        document.removeEventListener("click", onOutside);
+      }
+    });
   }
 
   // -------------------------------------------------------- additions merge
