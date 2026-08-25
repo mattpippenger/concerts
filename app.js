@@ -1069,7 +1069,6 @@
     var url = "https://api.setlist.fm/rest/1.0/" + path + sep + "apikey=" + encodeURIComponent(creds.setlistKey);
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
-    xhr.setRequestHeader("Accept", "application/json");
     xhr.onreadystatechange = function () {
       if (xhr.readyState !== 4) return;
       if (xhr.status === 200) {
