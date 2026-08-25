@@ -69,5 +69,17 @@
       navigator.serviceWorker.register('./sw.js').catch(console.error);
     }
   </script>
+
+  <!-- Add Show -->
+  <button class="add-show-fab" id="add-show-fab" aria-label="Add a show">+</button>
+
+  <div class="add-modal-overlay" id="add-modal-overlay" aria-hidden="true">
+    <div class="add-modal" id="add-modal" role="dialog" aria-modal="true" aria-label="Add Show">
+      <button class="add-modal-close" id="add-modal-close" aria-label="Close">&times;</button>
+      <div class="add-modal-body" id="add-modal-body">
+        <!-- content rendered by app.js -->
+      </div>
+    </div>
+  </div>
 </body>
 </html>

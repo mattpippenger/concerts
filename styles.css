@@ -922,3 +922,85 @@ button.fact-link:hover { border-top-color: var(--red); transform: translateY(-2p
   .ach-icon { font-size: 22px; }
   .ach-name { font-size: 11px; }
 }
+
+/* ------------------------------------------------------------------ Add Show */
+.add-show-fab {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--accent, #e05c2a);
+  color: #fff;
+  font-size: 28px;
+  line-height: 1;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.add-show-fab:hover { transform: scale(1.08); box-shadow: 0 6px 20px rgba(0,0,0,0.35); }
+.add-show-fab:active { transform: scale(0.96); }
+
+.add-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 300;
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+.add-modal-overlay.is-open { display: flex; }
+
+.add-modal {
+  background: var(--surface, #fff);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 540px;
+  margin: auto;
+  padding: 24px;
+  position: relative;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+}
+
+.add-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--ink-muted, #888);
+  line-height: 1;
+  padding: 4px 8px;
+}
+.add-modal-close:hover { color: var(--ink, #222); }
+
+.add-modal h2 { margin: 0 0 20px; font-size: 1.2rem; }
+
+/* Settings screen */
+.add-settings-field { margin-bottom: 16px; }
+.add-settings-field label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 4px; color: var(--ink-muted, #888); text-transform: uppercase; letter-spacing: 0.05em; }
+.add-settings-field input { width: 100%; box-sizing: border-box; padding: 10px 12px; border: 1px solid var(--border, #ddd); border-radius: 6px; font-size: 0.95rem; background: var(--surface, #fff); color: var(--ink, #222); }
+.add-settings-field input:focus { outline: 2px solid var(--accent, #e05c2a); border-color: transparent; }
+.add-settings-note { font-size: 0.78rem; color: var(--ink-muted, #888); margin-top: 4px; }
+.add-settings-note a { color: var(--accent, #e05c2a); }
+
+.add-btn-row { display: flex; gap: 10px; margin-top: 20px; }
+.add-btn { padding: 10px 20px; border-radius: 6px; border: none; font-size: 0.95rem; font-weight: 600; cursor: pointer; }
+.add-btn-primary { background: var(--accent, #e05c2a); color: #fff; }
+.add-btn-primary:hover { opacity: 0.9; }
+.add-btn-secondary { background: var(--surface-raised, #f0f0f0); color: var(--ink, #222); }
+.add-btn-secondary:hover { background: var(--border, #ddd); }
+
+.add-gear { background: none; border: none; cursor: pointer; font-size: 0.85rem; color: var(--ink-muted, #888); padding: 0; display: inline-flex; align-items: center; gap: 4px; }
+.add-gear:hover { color: var(--ink, #222); }

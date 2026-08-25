@@ -1016,6 +1016,95 @@
     applyTheme(saved);
   }
 
+  // -------------------------------------------------------- add show: credentials
+  var CRED_SETLIST = "concert_setlist_key";
+  var CRED_GITHUB  = "concert_github_pat";
+  var GITHUB_REPO  = "mattpippenger/concerts";
+  var ADDITIONS_PATH = "concerts-additions.json";
+
+  function getCredentials() {
+    try {
+      return {
+        setlistKey: localStorage.getItem(CRED_SETLIST) || "",
+        githubPat:  localStorage.getItem(CRED_GITHUB)  || ""
+      };
+    } catch (e) { return { setlistKey: "", githubPat: "" }; }
+  }
+
+  function saveCredentials(setlistKey, githubPat) {
+    try {
+      localStorage.setItem(CRED_SETLIST, setlistKey);
+      localStorage.setItem(CRED_GITHUB,  githubPat);
+    } catch (e) {}
+  }
+
+  // -------------------------------------------------------- add show: modal
+  function openAddModal() {
+    var overlay = el("add-modal-overlay");
+    if (!overlay) return;
+    overlay.classList.add("is-open");
+    overlay.setAttribute("aria-hidden", "false");
+    var creds = getCredentials();
+    if (!creds.setlistKey || !creds.githubPat) {
+      renderSettingsScreen();
+    } else {
+      renderAddForm();
+    }
+  }
+
+  function closeAddModal() {
+    var overlay = el("add-modal-overlay");
+    if (!overlay) return;
+    overlay.classList.remove("is-open");
+    overlay.setAttribute("aria-hidden", "true");
+    el("add-modal-body").innerHTML = "";
+  }
+
+  function renderSettingsScreen(onSave) {
+    var body = el("add-modal-body");
+    body.innerHTML =
+      '<h2>&#9881; Settings</h2>' +
+      '<p style="font-size:0.85rem;color:var(--ink-muted,#888);margin:0 0 16px">Enter your API credentials once. They\'re stored only in this browser.</p>' +
+      '<div class="add-settings-field">' +
+        '<label>setlist.fm API Key</label>' +
+        '<input id="set-setlist-key" type="password" placeholder="paste your key here" autocomplete="off">' +
+        '<div class="add-settings-note">Get one free at <a href="https://www.setlist.fm/settings/api" target="_blank" rel="noopener">setlist.fm/settings/api</a></div>' +
+      '</div>' +
+      '<div class="add-settings-field">' +
+        '<label>GitHub Personal Access Token</label>' +
+        '<input id="set-github-pat" type="password" placeholder="ghp_..." autocomplete="off">' +
+        '<div class="add-settings-note">Create at <a href="https://github.com/settings/tokens" target="_blank" rel="noopener">github.com/settings/tokens</a> &mdash; Fine-grained token, Contents read+write on <b>mattpippenger/concerts</b></div>' +
+      '</div>' +
+      '<div class="add-btn-row">' +
+        '<button class="add-btn add-btn-primary" id="set-save-btn">Save &amp; Continue</button>' +
+        '<button class="add-btn add-btn-secondary" id="set-cancel-btn">Cancel</button>' +
+      '</div>';
+
+    // pre-fill with stored values if re-opening settings
+    var creds = getCredentials();
+    el("set-setlist-key").value = creds.setlistKey;
+    el("set-github-pat").value  = creds.githubPat;
+
+    el("set-save-btn").addEventListener("click", function () {
+      var sk = el("set-setlist-key").value.trim();
+      var gp = el("set-github-pat").value.trim();
+      if (!sk || !gp) { alert("Both fields are required."); return; }
+      saveCredentials(sk, gp);
+      if (typeof onSave === "function") onSave();
+      else renderAddForm();
+    });
+
+    el("set-cancel-btn").addEventListener("click", function () {
+      if (typeof onSave === "function") renderAddForm();
+      else closeAddModal();
+    });
+  }
+
+  function renderAddForm() {
+    var body = el("add-modal-body");
+    body.innerHTML = '<h2>Add Show</h2><p style="color:var(--ink-muted,#888)">Form coming in next task&hellip;</p>';
+  }
+
   // -------------------------------------------------------- additions merge
   var CURRENT_VIEW = "overview";
 
@@ -1192,6 +1281,21 @@
         e.preventDefault();
         showDetail("venue", venue.getAttribute("data-venue"));
       }
+    });
+
+    var fab = el("add-show-fab");
+    if (fab) fab.addEventListener("click", openAddModal);
+
+    var closeBtn = el("add-modal-close");
+    if (closeBtn) closeBtn.addEventListener("click", closeAddModal);
+
+    var overlay = el("add-modal-overlay");
+    if (overlay) overlay.addEventListener("click", function (e) {
+      if (e.target === overlay) closeAddModal();
+    });
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeAddModal();
     });
 
     setView("overview");
