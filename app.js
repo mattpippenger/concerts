@@ -1065,9 +1065,10 @@
 
   function setlistFetch(path, callback) {
     var creds = getCredentials();
+    var sep = path.indexOf("?") === -1 ? "?" : "&";
+    var url = "https://api.setlist.fm/rest/1.0/" + path + sep + "apikey=" + encodeURIComponent(creds.setlistKey);
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "https://api.setlist.fm/rest/1.0/" + path, true);
-    xhr.setRequestHeader("x-api-key", creds.setlistKey);
+    xhr.open("GET", url, true);
     xhr.setRequestHeader("Accept", "application/json");
     xhr.onreadystatechange = function () {
       if (xhr.readyState !== 4) return;
