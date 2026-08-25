@@ -1574,10 +1574,14 @@
     var modal = el("add-modal");
     if (modal) modal.classList.add("add-saving");
 
+    var saveRow = el("add-save-row");
+    var prevStatus = saveRow && saveRow.nextSibling;
+    if (prevStatus && prevStatus.className && prevStatus.className.indexOf("add-save-status") !== -1) {
+      prevStatus.parentNode.removeChild(prevStatus);
+    }
     var statusArea = document.createElement("div");
     statusArea.className = "add-save-status";
     statusArea.textContent = "Saving to GitHub…";
-    var saveRow = el("add-save-row");
     if (saveRow) saveRow.parentNode.insertBefore(statusArea, saveRow.nextSibling);
 
     var creds = getCredentials();
