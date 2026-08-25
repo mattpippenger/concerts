@@ -1480,7 +1480,7 @@
       if (e.key === "Enter") { e.preventDefault(); addOpener(); }
     });
 
-    var chips = document.querySelectorAll(".add-opener-chip button");
+    var chips = wrap.querySelectorAll(".add-opener-chip button");
     Array.prototype.forEach.call(chips, function (btn) {
       btn.addEventListener("click", function () {
         var idx = parseInt(btn.getAttribute("data-idx"), 10);
