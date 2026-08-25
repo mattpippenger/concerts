@@ -10280,10 +10280,27 @@ window.CONCERT_DATA = [
                       "Charge",
                       "Yoda"
                   ]
+    },
+    {
+        "headliner":  "Tedeschi \u0026 Trucks Band",
+        "bands":  [
+                      "Tedeschi \u0026 Trucks Band",
+                      "Alabama Shakes"
+                  ],
+        "date":  "2026-08-25",
+        "year":  2026,
+        "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
+        "city":  "Indianapolis",
+        "state":  "IN",
+        "tourName":  "",
+        "setlistUrl":  "",
+        "songs":  [
+
+                  ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-08-10 08:17",
+    "generatedAt":  "2026-08-25 08:38",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  340
+    "showCount":  341
 };
