@@ -821,6 +821,23 @@
     // bands seen once
     var once = ARTISTS.filter(function (a) { return a.count === 1; }).length;
     facts.push(fact("One-and-done bands", once, "seen exactly once"));
+    // artist seen at the most unique venues
+    var artistVenues = {};
+    SHOWS.forEach(function (s) {
+      s.bands.forEach(function (b) {
+        var g = groupOf(b);
+        if (!artistVenues[g]) artistVenues[g] = {};
+        if (s.venue) artistVenues[g][s.venue] = 1;
+      });
+    });
+    var topVenueArtist = null, topVenueCount = 0;
+    Object.keys(artistVenues).forEach(function (g) {
+      var c = Object.keys(artistVenues[g]).length;
+      if (c > topVenueCount) { topVenueCount = c; topVenueArtist = g; }
+    });
+    if (topVenueArtist) {
+      facts.push(fact("Venue hopper", topVenueArtist, topVenueCount + " unique stages", {nav: 'artist', name: topVenueArtist}));
+    }
     // most concerts in a single month
     var monthCount = {};
     DATED.forEach(function (s) {
