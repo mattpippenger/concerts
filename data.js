@@ -10297,10 +10297,26 @@ window.CONCERT_DATA = [
         "songs":  [
 
                   ]
+    },
+    {
+        "headliner":  "Mt. Joy",
+        "bands":  [
+                      "Mt. Joy"
+                  ],
+        "date":  "2026-09-15",
+        "year":  2026,
+        "venue":  "Lawn at White River",
+        "city":  "Indianapolis",
+        "state":  "IN",
+        "tourName":  "World Tour 2026",
+        "setlistUrl":  "https://www.setlist.fm/setlist/mt-joy/2026/everwise-amphitheater-at-white-river-state-park-indianapolis-in-7373ba81.html",
+        "songs":  [
+
+                  ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-08-25 08:56",
+    "generatedAt":  "2026-09-16 07:58",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  341
+    "showCount":  342
 };
