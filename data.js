@@ -9850,7 +9850,7 @@ window.CONCERT_DATA = [
         "date":  "2025-07-11",
         "year":  2025,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/dave-matthews-band/2025/ruoff-music-center-noblesville-in-6b5aaa4e.html",
@@ -9887,7 +9887,7 @@ window.CONCERT_DATA = [
         "date":  "2025-07-12",
         "year":  2025,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/dave-matthews-band/2025/ruoff-music-center-noblesville-in-735aaa4d.html",
@@ -10142,7 +10142,7 @@ window.CONCERT_DATA = [
         "date":  "2026-06-14",
         "year":  2026,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/sammy-hagar/2026/ruoff-music-center-noblesville-in-434a8f83.html",
@@ -10178,7 +10178,7 @@ window.CONCERT_DATA = [
         "date":  "2026-06-27",
         "year":  2026,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/dave-matthews-band/2026/ruoff-music-center-noblesville-in-5b4a63d4.html",
@@ -10215,7 +10215,7 @@ window.CONCERT_DATA = [
         "date":  "2026-07-17",
         "year":  2026,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/the-black-crowes/2026/ruoff-music-center-noblesville-in-6b4a56b2.html",
@@ -10247,7 +10247,7 @@ window.CONCERT_DATA = [
         "date":  "2026-08-06",
         "year":  2026,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "Bigger \u0026 Weirder 2026 Tour",
         "setlistUrl":  "https://www.setlist.fm/setlist/weird-al-yankovic/2026/ruoff-music-center-noblesville-in-6b4f6a12.html",
@@ -10290,12 +10290,26 @@ window.CONCERT_DATA = [
         "date":  "2026-08-22",
         "year":  2026,
         "venue":  "Ruoff Home Mortgage Music Center (Deer Creek/Verizon Wireless/Klipsch)",
-        "city":  "Indianapolis",
+        "city":  "Noblesville",
         "state":  "IN",
         "tourName":  "",
         "setlistUrl":  "https://www.setlist.fm/setlist/tedeschi-trucks-band/2026/ruoff-music-center-noblesville-in-3376f0a1.html",
         "songs":  [
-
+                      "Don\u0027t Let Me Slide",
+                      "Little by Little",
+                      "Hero",
+                      "Bell Bottom Blues",
+                      "Why Does Love Got to Be So Sad?",
+                      "I Want More",
+                      "Willie the Pimp",
+                      "That Did It",
+                      "Bound for Glory",
+                      "Soul Sweet Song",
+                      "Loving Cup",
+                      "In a Silent Way",
+                      "Midnight in Harlem",
+                      "I Walk on Guilded Splinters",
+                      "Let\u0027s Go Get Stoned"
                   ]
     },
     {
@@ -10311,12 +10325,28 @@ window.CONCERT_DATA = [
         "tourName":  "World Tour 2026",
         "setlistUrl":  "https://www.setlist.fm/setlist/mt-joy/2026/everwise-amphitheater-at-white-river-state-park-indianapolis-in-7373ba81.html",
         "songs":  [
+                      ""
+                  ]
+    },
+    {
+        "headliner":  "Big Head Todd \u0026 The Monsters",
+        "bands":  [
+                      "Big Head Todd \u0026 The Monsters"
+                  ],
+        "date":  "2026-09-17",
+        "year":  2026,
+        "venue":  "Old National Centre",
+        "city":  "Indianapolis",
+        "state":  "IN",
+        "tourName":  "",
+        "setlistUrl":  "",
+        "songs":  [
 
                   ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-09-16 07:58",
+    "generatedAt":  "2026-09-18 11:15",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  342
+    "showCount":  343
 };
