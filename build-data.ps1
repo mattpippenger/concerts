@@ -318,8 +318,8 @@ try {
           if ($null -ne $fetched) {
             $s.songs = $fetched
             $cache[$key].songs = $fetched
-            Start-Sleep -Milliseconds 600
           }
+          Start-Sleep -Milliseconds 600          # throttle every API call, even failed/empty ones
           $queries++
         }
       } else {
@@ -330,8 +330,8 @@ try {
           $s.setlistUrl = $result.url
           $s.tourName   = $result.tourName
           $s.songs      = @($result.songs)
-          Start-Sleep -Milliseconds 600        # stay under setlist.fm's ~2 req/sec limit
         }
+        Start-Sleep -Milliseconds 600          # stay under setlist.fm's ~2 req/sec limit (incl. errors)
         $queries++
       }
       if ($s.setlistUrl) { $direct++ }
