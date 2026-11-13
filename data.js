@@ -10325,7 +10325,7 @@ window.CONCERT_DATA = [
         "tourName":  "World Tour 2026",
         "setlistUrl":  "https://www.setlist.fm/setlist/mt-joy/2026/everwise-amphitheater-at-white-river-state-park-indianapolis-in-7373ba81.html",
         "songs":  [
-                      ""
+
                   ]
     },
     {
@@ -10343,10 +10343,26 @@ window.CONCERT_DATA = [
         "songs":  [
 
                   ]
+    },
+    {
+        "headliner":  "Smashing Pumpkins",
+        "bands":  [
+                      "Smashing Pumpkins"
+                  ],
+        "date":  "2026-11-11",
+        "year":  2026,
+        "venue":  "Mortgage Matchup Center",
+        "city":  "Phoenix",
+        "state":  "AZ",
+        "tourName":  "",
+        "setlistUrl":  "",
+        "songs":  [
+
+                  ]
     }
 ];
 window.CONCERT_META = {
-    "generatedAt":  "2026-09-18 11:15",
+    "generatedAt":  "2026-11-13 16:10",
     "source":  "C:\\Users\\matt.pippenger\\Dropbox\\Concerts.xlsm",
-    "showCount":  343
+    "showCount":  344
 };
